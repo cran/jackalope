@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+
+<title>Intro to jackalope</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' || rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#header {
+text-align: center;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Intro to jackalope</h1>
+
+
+
+<p>This document provides brief examples of how <code>jackalope</code> can be used to generate sequencing data that can inform some common sampling decisions for HTS studies.</p>
+<p>For an example reference assembly, I simply simulated one of size 10 Mb using the following code:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1">ref &lt;-<span class="st"> </span><span class="kw">create_genome</span>(<span class="dv">10</span>, <span class="fl">1e6</span>)</a></code></pre></div>
+<p>This resulted in the following <code>ref_genome</code> object:</p>
+<pre><code>#&gt; &lt; Set of 10 sequences &gt;
+#&gt; # Total size: 10,000,000 bp
+#&gt;   name                          sequence                             length
+#&gt; seq0       TGTTCTCACGGAAAACGGGAAGTTT...TACGGTGCGGGGCTCGCTAGGCGGAT   1000000
+#&gt; seq1       AGAATACCTTGGACGACAGGCAACA...TTGGTACTACTGAACTCAAATCTCGA   1000000
+#&gt; seq2       TTTGAGGATCAGCGTTAGTGTCAAC...AGATATCGCCTAGCGTACCGCCCGGC   1000000
+#&gt; seq3       CTCTACAATCATACCGACTCATCCG...TTTTGGTTGAGCCCAATCTTTCAAGC   1000000
+#&gt; seq4       GAACGATTAGAACATGACCTTGCCG...AACTAACCCGCTTAGGCGCGATGATA   1000000
+#&gt; seq5       TGAACACTGTCTTTGTCCTTAACGC...CTTTCGGGATTTGCGAAACCAATCGA   1000000
+#&gt; seq6       GGGTGCCAACCCCCCTAATTACTAA...CCTAGCAGACGTCGTCTCTATTACAG   1000000
+#&gt; seq7       CGAATAGGGGTGCCTCTTACCTTCA...TCCTAGTCTCAGGACGGATAACCAGT   1000000
+#&gt; seq8       AGAAATATGCTTACGCATTAGCAGT...CGCCGAAAGACACCTCCCGTCAGTGA   1000000
+#&gt; seq9       GCAGTTACATTTACGCATCCTTACC...GGGGGCCTCGTGAGCTAGAGCTAGGT   1000000</code></pre>
+<p>For molecular-evolution information, I used the TN93 model, an insertion rate of <code>2e-5</code> for lengths from 1 to 10, and a deletion rate of <code>1e-5</code> for lengths from 1 to 40.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">sub &lt;-<span class="st"> </span><span class="kw">sub_TN93</span>(<span class="dt">pi_tcag =</span> <span class="kw">c</span>(<span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.3</span>, <span class="fl">0.4</span>),</a>
+<a class="sourceLine" id="cb3-2" data-line-number="2">                <span class="dt">alpha_1 =</span> <span class="fl">0.0001</span>, <span class="dt">alpha_2 =</span> <span class="fl">0.0002</span>,</a>
+<a class="sourceLine" id="cb3-3" data-line-number="3">                <span class="dt">beta =</span> <span class="fl">0.00015</span>)</a>
+<a class="sourceLine" id="cb3-4" data-line-number="4">ins &lt;-<span class="st"> </span><span class="kw">indels</span>(<span class="dt">rate =</span> <span class="fl">2e-5</span>, <span class="dt">max_length =</span> <span class="dv">10</span>)</a>
+<a class="sourceLine" id="cb3-5" data-line-number="5">del &lt;-<span class="st"> </span><span class="kw">indels</span>(<span class="dt">rate =</span> <span class="fl">1e-5</span>, <span class="dt">max_length =</span> <span class="dv">40</span>)</a></code></pre></div>
+<div id="assembling-a-genome" class="section level2">
+<h2>Assembling a genome</h2>
+<p>The example here produces FASTQ files from the known reference assembly that could test strategies for how to assemble a similar genome using HTS data.</p>
+<p>The first strategy is to use only PacBio sequencing. The PacBio Sequel system produces up to 500,000 reads per Single Molecule, Real-Time (SMRT) cell, so you could run the following for two cells:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw">pacbio</span>(ref, <span class="dt">out_prefix =</span> <span class="st">&quot;pacbio&quot;</span>, <span class="dt">n_reads =</span> <span class="dv">2</span> <span class="op">*</span><span class="st"> </span><span class="fl">500e3</span>)</a></code></pre></div>
+<p>An alternative, hybrid strategy uses 1 SMRT cell of PacBio sequencing and 1 lane (<span class="math inline">\(\sim 500\)</span> million reads) of <span class="math inline">\(2 \times 100\)</span>bp Illumina sequencing on the HiSeq 2500 system (the default Illumina system in <code>jackalope</code>):</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw">pacbio</span>(ref, <span class="dt">out_prefix =</span> <span class="st">&quot;pacbio&quot;</span>, <span class="dt">n_reads =</span> <span class="fl">500e3</span>)</a>
+<a class="sourceLine" id="cb5-2" data-line-number="2"><span class="kw">illumina</span>(ref, <span class="dt">out_prefix =</span> <span class="st">&quot;illumina&quot;</span>, <span class="dt">n_reads =</span> <span class="fl">500e6</span>, <span class="dt">paired =</span> <span class="ot">TRUE</span>,</a>
+<a class="sourceLine" id="cb5-3" data-line-number="3">         <span class="dt">read_length =</span> <span class="dv">100</span>)</a></code></pre></div>
+<p>The last strategy combines 1 lane of <span class="math inline">\(2 \times 100\)</span>bp Illumina HiSeq 2500 sequencing with 1 flow cell of <span class="math inline">\(2 \times 250\)</span>bp mate-pair sequencing on an Illumina MiSeq v3. The mate-pair sequencing uses longer fragments (defaults are mean of 400 and standard deviation of 100) to better cover highly repetitive regions.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw">illumina</span>(ref, <span class="dt">out_prefix =</span> <span class="st">&quot;ill_pe&quot;</span>, <span class="dt">n_reads =</span> <span class="fl">500e6</span>, <span class="dt">paired =</span> <span class="ot">TRUE</span>,</a>
+<a class="sourceLine" id="cb6-2" data-line-number="2">         <span class="dt">read_length =</span> <span class="dv">100</span>)</a>
+<a class="sourceLine" id="cb6-3" data-line-number="3"><span class="kw">illumina</span>(ref, <span class="dt">out_prefix =</span> <span class="st">&quot;ill_mp&quot;</span>, <span class="dt">seq_sys =</span> <span class="st">&quot;MSv3&quot;</span>,</a>
+<a class="sourceLine" id="cb6-4" data-line-number="4">         <span class="dt">read_length =</span> <span class="dv">250</span>, <span class="dt">n_reads =</span> <span class="fl">50e6</span>, <span class="dt">matepair =</span> <span class="ot">TRUE</span>, </a>
+<a class="sourceLine" id="cb6-5" data-line-number="5">         <span class="dt">frag_mean =</span> <span class="dv">3000</span>, <span class="dt">frag_sd =</span> <span class="dv">500</span>)</a></code></pre></div>
+</div>
+<div id="estimating-divergence-between-populations" class="section level2">
+<h2>Estimating divergence between populations</h2>
+<p>Here, I will demonstrate how to generate population-genomic data of a type that might be used to estimate the divergence between two populations. I first use the <code>scrm</code> package to conduct coalescent simulations that will generate segregating sites for 40 haploid variants from the reference genome. Twenty of the variants are from one population, twenty from another. The symmetrical migration rate is 100 individuals per generation. To generate many mutations, I set the population-scaled mutation rate (<span class="math inline">\(\theta = 4 N_0 \mu\)</span>) to <code>100</code> for this example.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">ssites &lt;-<span class="st"> </span><span class="kw">scrm</span>(<span class="kw">paste</span>(<span class="st">&quot;40&quot;</span>, ref<span class="op">$</span><span class="kw">n_seqs</span>(), <span class="st">&quot;-t 100 -I 2 20 20 100&quot;</span>))</a></code></pre></div>
+<p>Using the previously created objects for molecular evolution information (<code>sub</code>, <code>ins</code>, and <code>del</code>), I create variants from the reference genome:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">vars &lt;-<span class="st"> </span><span class="kw">create_variants</span>(ref, <span class="kw">vars_ssites</span>(ssites), sub, ins, del)</a></code></pre></div>
+<p>This results in the following set of variants:</p>
+<pre><code>#&gt;                            &lt;&lt; Variants object &gt;&gt;
+#&gt; # Variants: 40
+#&gt; # Mutations: 76,851
+#&gt; 
+#&gt;                         &lt;&lt; Reference genome info: &gt;&gt;
+#&gt; &lt; Set of 10 sequences &gt;
+#&gt; # Total size: 10,000,000 bp
+#&gt;   name                          sequence                             length
+#&gt; seq0       TGTTCTCACGGAAAACGGGAAGTTT...TACGGTGCGGGGCTCGCTAGGCGGAT   1000000
+#&gt; seq1       AGAATACCTTGGACGACAGGCAACA...TTGGTACTACTGAACTCAAATCTCGA   1000000
+#&gt; seq2       TTTGAGGATCAGCGTTAGTGTCAAC...AGATATCGCCTAGCGTACCGCCCGGC   1000000
+#&gt; seq3       CTCTACAATCATACCGACTCATCCG...TTTTGGTTGAGCCCAATCTTTCAAGC   1000000
+#&gt; seq4       GAACGATTAGAACATGACCTTGCCG...AACTAACCCGCTTAGGCGCGATGATA   1000000
+#&gt; seq5       TGAACACTGTCTTTGTCCTTAACGC...CTTTCGGGATTTGCGAAACCAATCGA   1000000
+#&gt; seq6       GGGTGCCAACCCCCCTAATTACTAA...CCTAGCAGACGTCGTCTCTATTACAG   1000000
+#&gt; seq7       CGAATAGGGGTGCCTCTTACCTTCA...TCCTAGTCTCAGGACGGATAACCAGT   1000000
+#&gt; seq8       AGAAATATGCTTACGCATTAGCAGT...CGCCGAAAGACACCTCCCGTCAGTGA   1000000
+#&gt; seq9       GCAGTTACATTTACGCATCCTTACC...GGGGGCCTCGTGAGCTAGAGCTAGGT   1000000</code></pre>
+<p>For a file of true divergences from the reference genome, the <code>write_vcf</code> function writes the <code>variants</code> object to a VCF file:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw">write_vcf</span>(vars, <span class="st">&quot;variants&quot;</span>)</a></code></pre></div>
+<p>Lastly, I simulate 1 lane of <span class="math inline">\(2 \times 100\)</span>bp Illumina HiSeq 2500 sequencing. In this case, individuals within a population are pooled, and the population sequences are derived from are identified by barcodes.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="kw">illumina</span>(vars, <span class="dt">out_prefix =</span> <span class="st">&quot;vars_illumina&quot;</span>, <span class="dt">n_reads =</span> <span class="fl">500e6</span>, <span class="dt">paired =</span> <span class="ot">TRUE</span>,</a>
+<a class="sourceLine" id="cb11-2" data-line-number="2">         <span class="dt">read_length =</span> <span class="dv">100</span>, <span class="dt">barcodes =</span> <span class="kw">c</span>(<span class="kw">rep</span>(<span class="st">&quot;AACCGCGG&quot;</span>, <span class="dv">20</span>), </a>
+<a class="sourceLine" id="cb11-3" data-line-number="3">                                         <span class="kw">rep</span>(<span class="st">&quot;GGTTATAA&quot;</span>, <span class="dv">20</span>)))</a></code></pre></div>
+<p>The below example instead has each individual variant’s reads output to separate FASTQ files:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1"><span class="kw">illumina</span>(vars, <span class="dt">out_prefix =</span> <span class="st">&quot;vars_illumina&quot;</span>, <span class="dt">n_reads =</span> <span class="fl">500e6</span>, <span class="dt">paired =</span> <span class="ot">TRUE</span>,</a>
+<a class="sourceLine" id="cb12-2" data-line-number="2">         <span class="dt">read_length =</span> <span class="dv">100</span>, <span class="dt">sep_files =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
+</div>
+<div id="constructing-a-phylogeny" class="section level2">
+<h2>Constructing a phylogeny</h2>
+</div>
+<div id="from-one-phylogenetic-tree" class="section level2">
+<h2>From one phylogenetic tree</h2>
+<p>This section shows how <code>jackalope</code> can generate variants from a phylogeny, then simulate sequencing data from those variants to test phylogeny reconstruction methods. First, I generated a random coalescent tree of 10 species using the <code>ape</code> package.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">tree &lt;-<span class="st"> </span><span class="kw">rcoal</span>(<span class="dv">10</span>)</a></code></pre></div>
+<p>Then I input that to the <code>create_variants</code> function alongside the molecular evolution information.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1">vars &lt;-<span class="st"> </span><span class="kw">create_variants</span>(ref, <span class="kw">vars_phylo</span>(tree), sub, ins, del)</a></code></pre></div>
+<p>This results in the following <code>variants</code> object:</p>
+<pre><code>#&gt;                            &lt;&lt; Variants object &gt;&gt;
+#&gt; # Variants: 10
+#&gt; # Mutations: 36,395
+#&gt; 
+#&gt;                         &lt;&lt; Reference genome info: &gt;&gt;
+#&gt; &lt; Set of 10 sequences &gt;
+#&gt; # Total size: 10,000,000 bp
+#&gt;   name                          sequence                             length
+#&gt; seq0       TGTTCTCACGGAAAACGGGAAGTTT...TACGGTGCGGGGCTCGCTAGGCGGAT   1000000
+#&gt; seq1       AGAATACCTTGGACGACAGGCAACA...TTGGTACTACTGAACTCAAATCTCGA   1000000
+#&gt; seq2       TTTGAGGATCAGCGTTAGTGTCAAC...AGATATCGCCTAGCGTACCGCCCGGC   1000000
+#&gt; seq3       CTCTACAATCATACCGACTCATCCG...TTTTGGTTGAGCCCAATCTTTCAAGC   1000000
+#&gt; seq4       GAACGATTAGAACATGACCTTGCCG...AACTAACCCGCTTAGGCGCGATGATA   1000000
+#&gt; seq5       TGAACACTGTCTTTGTCCTTAACGC...CTTTCGGGATTTGCGAAACCAATCGA   1000000
+#&gt; seq6       GGGTGCCAACCCCCCTAATTACTAA...CCTAGCAGACGTCGTCTCTATTACAG   1000000
+#&gt; seq7       CGAATAGGGGTGCCTCTTACCTTCA...TCCTAGTCTCAGGACGGATAACCAGT   1000000
+#&gt; seq8       AGAAATATGCTTACGCATTAGCAGT...CGCCGAAAGACACCTCCCGTCAGTGA   1000000
+#&gt; seq9       GCAGTTACATTTACGCATCCTTACC...GGGGGCCTCGTGAGCTAGAGCTAGGT   1000000</code></pre>
+<p>Now I can generate data for 1 flow cell of <span class="math inline">\(2 \times 250\)</span>bp sequencing on an Illumina MiSeq v3.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="kw">illumina</span>(vars, <span class="dt">out_prefix =</span> <span class="st">&quot;phylo_tree&quot;</span>, <span class="dt">seq_sys =</span> <span class="st">&quot;MSv3&quot;</span>,</a>
+<a class="sourceLine" id="cb16-2" data-line-number="2">         <span class="dt">read_length =</span> <span class="dv">250</span>, <span class="dt">n_reads =</span> <span class="fl">50e6</span>)</a></code></pre></div>
+</div>
+<div id="from-gene-trees" class="section level2">
+<h2>From gene trees</h2>
+<p>Similar to the section above, the ultimate goal here is to test phylogeny reconstruction methods. The difference in this section is that instead of using a single, straightforward phylogeny, I use multiple gene trees per sequence. In the species used in these simulations, species 3 diverged from 1 and 2 at <span class="math inline">\(t = 0.5\)</span>, where <span class="math inline">\(t\)</span> indicates time into the past and is in units of <span class="math inline">\(4 N_0\)</span> generations. Species 1 and 2 diverged at <span class="math inline">\(t = 0.25\)</span>. I assume a recombination rate of <span class="math inline">\(1 / (4 N_0)\)</span> recombination events per sequence per generation. Because each sequence is a different length and the length is required for including a recombination rate, I had to run <code>scrm</code> separately for each sequence. There are 4 diploid individuals sampled per species.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1"><span class="co"># Run scrm for one sequence size:</span></a>
+<a class="sourceLine" id="cb17-2" data-line-number="2">one_seq &lt;-<span class="st"> </span><span class="cf">function</span>(size) {</a>
+<a class="sourceLine" id="cb17-3" data-line-number="3">    sims &lt;-<span class="st"> </span><span class="kw">scrm</span>(</a>
+<a class="sourceLine" id="cb17-4" data-line-number="4">        <span class="kw">paste</span>(<span class="st">&quot;24 1&quot;</span>,</a>
+<a class="sourceLine" id="cb17-5" data-line-number="5">              <span class="co"># Output gene trees:</span></a>
+<a class="sourceLine" id="cb17-6" data-line-number="6">              <span class="st">&quot;-T&quot;</span>,</a>
+<a class="sourceLine" id="cb17-7" data-line-number="7">              <span class="co"># Recombination:</span></a>
+<a class="sourceLine" id="cb17-8" data-line-number="8">              <span class="st">&quot;-r 1&quot;</span>, size,</a>
+<a class="sourceLine" id="cb17-9" data-line-number="9">              <span class="co"># 3 species with no ongoing migration:</span></a>
+<a class="sourceLine" id="cb17-10" data-line-number="10">              <span class="st">&quot;-I 3&quot;</span>, <span class="kw">paste</span>(<span class="kw">rep</span>(<span class="st">&quot;8&quot;</span>, <span class="dv">3</span>), <span class="dt">collapse =</span> <span class="st">&quot; &quot;</span>), <span class="st">&quot;0&quot;</span>,</a>
+<a class="sourceLine" id="cb17-11" data-line-number="11">              <span class="co"># Species 2 derived from 1 at time 1.0:</span></a>
+<a class="sourceLine" id="cb17-12" data-line-number="12">              <span class="st">&quot;-ej 0.5 2 1&quot;</span>,  </a>
+<a class="sourceLine" id="cb17-13" data-line-number="13">              <span class="co"># Species 3 derived from 2 at time 0.5:</span></a>
+<a class="sourceLine" id="cb17-14" data-line-number="14">              <span class="st">&quot;-ej 0.25 3 2&quot;</span></a>
+<a class="sourceLine" id="cb17-15" data-line-number="15">        ))</a>
+<a class="sourceLine" id="cb17-16" data-line-number="16">    <span class="kw">return</span>(sims<span class="op">$</span>trees[[<span class="dv">1</span>]])</a>
+<a class="sourceLine" id="cb17-17" data-line-number="17">}</a>
+<a class="sourceLine" id="cb17-18" data-line-number="18"><span class="co"># For all sequences:</span></a>
+<a class="sourceLine" id="cb17-19" data-line-number="19">gtrees &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="dt">trees =</span> <span class="kw">lapply</span>(ref<span class="op">$</span><span class="kw">sizes</span>(), one_seq))</a></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1">vars &lt;-<span class="st"> </span><span class="kw">create_variants</span>(ref, <span class="kw">vars_gtrees</span>(gtrees),</a>
+<a class="sourceLine" id="cb18-2" data-line-number="2">                        sub, ins, del)</a></code></pre></div>
+<p>This results in the following <code>variants</code> object:</p>
+<pre><code>#&gt;                            &lt;&lt; Variants object &gt;&gt;
+#&gt; # Variants: 24
+#&gt; # Mutations: 38,130
+#&gt; 
+#&gt;                         &lt;&lt; Reference genome info: &gt;&gt;
+#&gt; &lt; Set of 10 sequences &gt;
+#&gt; # Total size: 10,000,000 bp
+#&gt;   name                          sequence                             length
+#&gt; seq0       TGTTCTCACGGAAAACGGGAAGTTT...TACGGTGCGGGGCTCGCTAGGCGGAT   1000000
+#&gt; seq1       AGAATACCTTGGACGACAGGCAACA...TTGGTACTACTGAACTCAAATCTCGA   1000000
+#&gt; seq2       TTTGAGGATCAGCGTTAGTGTCAAC...AGATATCGCCTAGCGTACCGCCCGGC   1000000
+#&gt; seq3       CTCTACAATCATACCGACTCATCCG...TTTTGGTTGAGCCCAATCTTTCAAGC   1000000
+#&gt; seq4       GAACGATTAGAACATGACCTTGCCG...AACTAACCCGCTTAGGCGCGATGATA   1000000
+#&gt; seq5       TGAACACTGTCTTTGTCCTTAACGC...CTTTCGGGATTTGCGAAACCAATCGA   1000000
+#&gt; seq6       GGGTGCCAACCCCCCTAATTACTAA...CCTAGCAGACGTCGTCTCTATTACAG   1000000
+#&gt; seq7       CGAATAGGGGTGCCTCTTACCTTCA...TCCTAGTCTCAGGACGGATAACCAGT   1000000
+#&gt; seq8       AGAAATATGCTTACGCATTAGCAGT...CGCCGAAAGACACCTCCCGTCAGTGA   1000000
+#&gt; seq9       GCAGTTACATTTACGCATCCTTACC...GGGGGCCTCGTGAGCTAGAGCTAGGT   1000000</code></pre>
+<p>To store mutation information by diploid sample, the <code>write_vcf</code> function writes the <code>variants</code> object to a VCF file. It assigns haplotypes to diploid samples using a matrix for the <code>sample_matrix</code> argument:</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1"><span class="kw">write_vcf</span>(vars, <span class="dt">out_prefix =</span> <span class="st">&quot;var_gtrees&quot;</span>,</a>
+<a class="sourceLine" id="cb20-2" data-line-number="2">          <span class="dt">sample_matrix =</span> <span class="kw">matrix</span>(<span class="dv">1</span><span class="op">:</span>vars<span class="op">$</span><span class="kw">n_vars</span>(), <span class="dt">ncol =</span> <span class="dv">2</span>, <span class="dt">byrow =</span> <span class="ot">TRUE</span>))</a></code></pre></div>
+<p>Now I can generate data for 1 flow cell of <span class="math inline">\(2 \times 250\)</span>bp sequencing on an Illumina MiSeq v3.</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1"><span class="kw">illumina</span>(ref, <span class="dt">out_prefix =</span> <span class="st">&quot;phylo_gtrees&quot;</span>,</a>
+<a class="sourceLine" id="cb21-2" data-line-number="2">         <span class="dt">seq_sys =</span> <span class="st">&quot;MSv3&quot;</span>,</a>
+<a class="sourceLine" id="cb21-3" data-line-number="3">         <span class="dt">read_length =</span> <span class="dv">250</span>,</a>
+<a class="sourceLine" id="cb21-4" data-line-number="4">         <span class="dt">n_reads =</span> <span class="fl">50e6</span>)</a></code></pre></div>
+</div>
+
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
