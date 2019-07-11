@@ -1,4 +1,4 @@
-02500252097c1e99a9192c43dc816349 *DESCRIPTION
+5cde7ac230157e4a8ab315c0f83b7923 *DESCRIPTION
 3fb6cb5ed6ff6e1b0c1afe58f8cd6db7 *LICENSE
 c30502372bf17ee70808c6703d040493 *NAMESPACE
 b9e301b62d5fd80b56e52eb5471314ad *R/RcppExports.R
@@ -14,7 +14,7 @@ ff03e20b31c04f5f61a11d1a002a5e29 *R/hts_pacbio.R
 a3821efd5bb73df8a28976ebe9b4c7ce *R/util.R
 29daf567b1d340ccbf8d54a93b6269d4 *R/vars_functions.R
 4e84bd3d342da9e81cded48bb61ff3af *README.md
-decbd144821734d3a9eb9b53ae6a06d5 *build/vignette.rds
+0e0d05dcdb895b2260159886e95c931f *build/vignette.rds
 e53b1cad633ef60ce4e23042d446a29e *data/evo_rates.rda
 f34eb0bd26c54a1294aed6102263f570 *inst/CITATION
 4b3be45e2fbc04196fd1eff2228fa45d *inst/art_profiles/Emp100R1.txt.gz
