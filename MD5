@@ -1,8 +1,8 @@
-5cde7ac230157e4a8ab315c0f83b7923 *DESCRIPTION
+5cf3f5f21b426c38b1c3bc062e876be8 *DESCRIPTION
 3fb6cb5ed6ff6e1b0c1afe58f8cd6db7 *LICENSE
-c30502372bf17ee70808c6703d040493 *NAMESPACE
+d203bfc59aecb0121bd1c5e71db52666 *NAMESPACE
 b9e301b62d5fd80b56e52eb5471314ad *R/RcppExports.R
-663733cf0ed187678f82ccea92db58cc *R/aaa-classes.R
+3d2cbf70a55c566e78ddc0eecfdca540 *R/aaa-classes.R
 de0a801559481ca108a252639827df9e *R/create_genome.R
 4970a4648fad881b030568e532b49e97 *R/create_variants.R
 51799b7b46f2f01cd234eaf719d56df3 *R/data.R
@@ -46,10 +46,10 @@ de1f2d814d8c622be6a4c89aa4c0ea85 *inst/art_profiles/NextSeq500v2L75R1.txt.gz
 443281230cb8b598f3711e04d1116ac3 *inst/art_profiles/NextSeq500v2L75R2.txt.gz
 89b946e9aa7fa345b001e11a14f7d002 *inst/doc/jackalope-intro.R
 c57d7c91bfda887514a5a69f2d0a8132 *inst/doc/jackalope-intro.Rmd
-1773c54aaa94d5641b0940fa31a693fc *inst/doc/jackalope-intro.html
+85f9ea6fb9c006df61b4cab24d023729 *inst/doc/jackalope-intro.html
 58747ce7c3c3f5e6f7edb30baad0256d *inst/doc/sub-models.R
 55fa5ffc823697299b44f4e92c83edfc *inst/doc/sub-models.Rmd
-0b2ffd3996f26cdb4518fe0f38b99ca1 *inst/doc/sub-models.html
+2c7901a5b8ae34f59fc366d708bcc2a8 *inst/doc/sub-models.html
 7abf0105712a40bf323b7e0cf85524ee *inst/include/pcg/pcg_extras.hpp
 148b36a5b86f436ed4f455997041b262 *inst/include/pcg/pcg_random.hpp
 d68210ec9fe1574857a10f1846309cdb *inst/include/pcg/pcg_uint128.hpp
@@ -74,7 +74,7 @@ cfee953cff01d97233d191891a49fb51 *man/vars_phylo.Rd
 aa2a8c609e125d4c111b55ceca8cf7f0 *man/vars_vcf.Rd
 d8d843b5399872d6fd8f1f0b97d67cf4 *man/write_fasta.Rd
 01e821f6adb91124efd8aa94a10f8b17 *man/write_vcf.Rd
-521c6659bdd7854b7a24cd4cd3a842f8 *src/Makevars
+0281d781ac04b76675cd11e3cfb7678f *src/Makevars
 6dfd93303d1f1cd32282e05cd49f8e0e *src/Makevars.win
 feca95c57c06b7d3c82fa341c1290e11 *src/RcppExports.cpp
 78d54651dcfe80746cd9ab1a95adc469 *src/alias_sampler.h
@@ -89,8 +89,8 @@ e4d8f5c293720ad992e2177283588c8d *src/hts_pacbio.cpp
 cf4146bb3f8391cc118aa96b2ff20c33 *src/io_bed.cpp
 eb4db15ee0d1ea527d37b20a2bcc1fb8 *src/io_fasta.cpp
 96291ec6617661a373900b209e939ea6 *src/io_ms.cpp
-b0b661b9695628a61fc26ac0bccd6f55 *src/io_vcf.cpp
-0fbd7b8181feadb55cc797fbe4950988 *src/io_vcf.h
+81d5cedf499ad1065a715fb67d944b2c *src/io_vcf.cpp
+6bef115c0db6e66ec4b15016ca48b938 *src/io_vcf.h
 091a9063ca74c3292496b6c871b43bd3 *src/jackalope_types.h
 d01a73e2d65bfb62653624a835c10397 *src/mutator.cpp
 8b9152e83aa8599d78a473398c3a1b71 *src/mutator.h
