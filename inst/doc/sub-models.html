@@ -230,8 +230,8 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 \end{bmatrix}
 \]</span></p>
 <p>(For example, <span class="math inline">\(C \rightarrow T\)</span> indicates that the cell in that location refers to the rate from <span class="math inline">\(C\)</span> to <span class="math inline">\(T\)</span>.) Diagonals are determined based on all rows having to sum to zero (Yang 2006).</p>
-<p>Under each rate matrix are listed the parameters in <code>create_mevo</code> required for that model.</p>
-<p>Below is a key of the parameters required in <code>create_mevo</code> for the models below, in order of their appearance:</p>
+<p>Under each rate matrix are listed the parameters in the function required for that model.</p>
+<p>Below is a key of the parameters required in the functions for the models below, in order of their appearance:</p>
 <ul>
 <li><code>lambda</code>: <span class="math inline">\(\lambda\)</span></li>
 <li><code>alpha</code> <span class="math inline">\(\alpha\)</span></li>
@@ -243,6 +243,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <li><code>abcdef</code> vector of <span class="math inline">\(a\)</span>, <span class="math inline">\(b\)</span>, <span class="math inline">\(c\)</span>, <span class="math inline">\(d\)</span>, <span class="math inline">\(e\)</span>, then <span class="math inline">\(f\)</span></li>
 <li><code>Q</code>: matrix of all parameters, where diagonals are ignored</li>
 </ul>
+<p>Functions in <code>jackalope</code> that employ each model take the form <code>sub_X</code> for model <code>X</code> (e.g., <code>sub_JC69</code> for JC69 model).</p>
 </div>
 <div id="jc69" class="section level2">
 <h2>JC69</h2>
