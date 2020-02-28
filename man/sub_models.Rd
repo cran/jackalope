@@ -12,28 +12,59 @@
 \alias{sub_UNREST}
 \title{Construct necessary information for substitution models.}
 \usage{
-sub_JC69(lambda, gamma_shape = NULL, gamma_k = 5, invariant = 0)
+sub_JC69(lambda, mu = 1, gamma_shape = NULL, gamma_k = 5, invariant = 0)
 
-sub_K80(alpha, beta, gamma_shape = NULL, gamma_k = 5, invariant = 0)
+sub_K80(alpha, beta, mu = 1, gamma_shape = NULL, gamma_k = 5, invariant = 0)
 
-sub_F81(pi_tcag, gamma_shape = NULL, gamma_k = 5, invariant = 0)
+sub_F81(pi_tcag, mu = 1, gamma_shape = NULL, gamma_k = 5, invariant = 0)
 
-sub_HKY85(pi_tcag, alpha, beta, gamma_shape = NULL, gamma_k = 5,
-  invariant = 0)
+sub_HKY85(
+  pi_tcag,
+  alpha,
+  beta,
+  mu = 1,
+  gamma_shape = NULL,
+  gamma_k = 5,
+  invariant = 0
+)
 
-sub_F84(pi_tcag, beta, kappa, gamma_shape = NULL, gamma_k = 5,
-  invariant = 0)
+sub_F84(
+  pi_tcag,
+  beta,
+  kappa,
+  mu = 1,
+  gamma_shape = NULL,
+  gamma_k = 5,
+  invariant = 0
+)
 
-sub_TN93(pi_tcag, alpha_1, alpha_2, beta, gamma_shape = NULL,
-  gamma_k = 5, invariant = 0)
+sub_TN93(
+  pi_tcag,
+  alpha_1,
+  alpha_2,
+  beta,
+  mu = 1,
+  gamma_shape = NULL,
+  gamma_k = 5,
+  invariant = 0
+)
 
-sub_GTR(pi_tcag, abcdef, gamma_shape = NULL, gamma_k = 5,
-  invariant = 0)
+sub_GTR(
+  pi_tcag,
+  abcdef,
+  mu = 1,
+  gamma_shape = NULL,
+  gamma_k = 5,
+  invariant = 0
+)
 
-sub_UNREST(Q, gamma_shape = NULL, gamma_k = 5, invariant = 0)
+sub_UNREST(Q, mu = 1, gamma_shape = NULL, gamma_k = 5, invariant = 0)
 }
 \arguments{
 \item{lambda}{Substitution rate for all possible substitutions.}
+
+\item{mu}{Total rate of substitutions. Defaults to \code{1}, which makes branch lengths
+in units of substitutions per site. Passing \code{NULL} results in no scaling.}
 
 \item{gamma_shape}{Numeric shape parameter for discrete Gamma distribution used for
 among-site variability. Values must be greater than zero.
@@ -41,12 +72,12 @@ If this parameter is \code{NULL}, among-site variability is not included.
 Defaults to \code{NULL}.}
 
 \item{gamma_k}{The number of categories to split the discrete Gamma distribution
-into. Values must be an integer in the range \code{[2,255]}.
+into. Values must be an integer in the range \verb{[2,255]}.
 This argument is ignored if \code{gamma_shape} is \code{NA}.
 Defaults to \code{5}.}
 
 \item{invariant}{Proportion of sites that are invariant.
-Values must be in the range \code{[0,1)}.
+Values must be in the range \verb{[0,1)}.
 Defaults to \code{0}.}
 
 \item{alpha}{Substitution rate for transitions.}
@@ -74,7 +105,7 @@ Values on the diagonal are calculated inside the function so are ignored.}
 }
 \value{
 A \code{sub_info} object, which is an R6 class that wraps the info needed for
-the \code{create_variants} function.
+the \code{create_haplotypes} function.
 It does not allow the user to directly manipulate the info inside, as that
 should be done using the \code{sub_models} functions.
 You can use the following methods from the class to view information:
@@ -139,5 +170,5 @@ obj_K80 <- sub_K80(alpha = 0.2, beta = 0.1,
 
 }
 \seealso{
-\code{\link{create_variants}}
+\code{\link{create_haplotypes}}
 }

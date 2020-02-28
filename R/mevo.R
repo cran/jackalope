@@ -145,7 +145,7 @@ sub_info <- R6Class(
 #'
 #' @noRd
 #'
-sub_arg_checks <- function(mod_name,
+sub_arg_checks <- function(mu, mod_name,
                            pi_tcag = NULL, alpha_1 = NULL, alpha_2 = NULL,
                            beta = NULL, gamma_shape = NULL, gamma_k = NULL,
                            invariant = NULL, lambda = NULL, alpha = NULL,
@@ -173,23 +173,26 @@ sub_arg_checks <- function(mod_name,
     }
 
     # Single-number parameters:
+    if (!is.null(mu) && !(single_number(mu) && mu > 0)) {
+        err_msg(paste0("sub_", mod_name), "mu", "NULL or a single number > 0")
+    }
     if (!is.null(alpha_1) && !single_number(alpha_1, 0)) {
-        err_msg(paste0("sub_", mod_name), "alpha_1", "a single number > 0")
+        err_msg(paste0("sub_", mod_name), "alpha_1", "a single number >= 0")
     }
     if (!is.null(alpha_2) && !single_number(alpha_2, 0)) {
-        err_msg(paste0("sub_", mod_name), "alpha_2", "a single number > 0")
+        err_msg(paste0("sub_", mod_name), "alpha_2", "a single number >= 0")
     }
     if (!is.null(beta) && !single_number(beta, 0)) {
-        err_msg(paste0("sub_", mod_name), "beta", "a single number > 0")
+        err_msg(paste0("sub_", mod_name), "beta", "a single number >= 0")
     }
     if (!is.null(lambda) && !single_number(lambda, 0)) {
-        err_msg(paste0("sub_", mod_name), "lambda", "a single number > 0")
+        err_msg(paste0("sub_", mod_name), "lambda", "a single number >= 0")
     }
     if (!is.null(alpha) && !single_number(alpha, 0)) {
-        err_msg(paste0("sub_", mod_name), "alpha", "a single number > 0")
+        err_msg(paste0("sub_", mod_name), "alpha", "a single number >= 0")
     }
     if (!is.null(kappa) && !single_number(kappa, 0)) {
-        err_msg(paste0("sub_", mod_name), "kappa", "a single number > 0")
+        err_msg(paste0("sub_", mod_name), "kappa", "a single number >= 0")
     }
 
 
@@ -222,10 +225,10 @@ sub_arg_checks <- function(mod_name,
 #'
 #' @name sub_models
 #'
-#' @seealso \code{\link{create_variants}}
+#' @seealso \code{\link{create_haplotypes}}
 #'
 #' @return A `sub_info` object, which is an R6 class that wraps the info needed for
-#' the `create_variants` function.
+#' the `create_haplotypes` function.
 #' It does not allow the user to directly manipulate the info inside, as that
 #' should be done using the `sub_models` functions.
 #' You can use the following methods from the class to view information:
@@ -276,20 +279,19 @@ NULL
 #' @describeIn sub_models JC69 model.
 #'
 #' @param lambda Substitution rate for all possible substitutions.
-#' @inheritParams sub_TN93
 #'
 #' @export
 #'
 #'
-sub_JC69 <- function(lambda, gamma_shape = NULL, gamma_k = 5, invariant = 0) {
+sub_JC69 <- function(lambda, mu = 1, gamma_shape = NULL, gamma_k = 5, invariant = 0) {
 
-    sub_arg_checks("JC69", lambda = lambda,
+    sub_arg_checks(mu, "JC69", lambda = lambda,
                    gamma_shape = gamma_shape, gamma_k = gamma_k, invariant = invariant)
 
     pi_tcag <- rep(0.25, 4)
     lambda <- lambda * 4;  # bc it's being multiplied by pi_tcag
 
-    out <- sub_TN93__(pi_tcag, lambda, lambda, lambda,
+    out <- sub_TN93__(mu, pi_tcag, lambda, lambda, lambda,
                     gamma_shape, gamma_k, invariant, "JC69")
 
     return(out)
@@ -299,20 +301,19 @@ sub_JC69 <- function(lambda, gamma_shape = NULL, gamma_k = 5, invariant = 0) {
 #' @describeIn sub_models K80 model.
 #'
 #' @param alpha Substitution rate for transitions.
-#' @inheritParams sub_TN93
 #'
 #' @export
 #'
-sub_K80 <- function(alpha, beta, gamma_shape = NULL, gamma_k = 5, invariant = 0) {
+sub_K80 <- function(alpha, beta, mu = 1, gamma_shape = NULL, gamma_k = 5, invariant = 0) {
 
-    sub_arg_checks("K80", alpha = alpha, beta = beta,
+    sub_arg_checks(mu, "K80", alpha = alpha, beta = beta,
                    gamma_shape = gamma_shape, gamma_k = gamma_k, invariant = invariant)
 
     pi_tcag <- rep(0.25, 4)
     alpha <- alpha * 4;  # bc they're being multiplied by pi_tcag
     beta <- beta * 4;  # bc they're being multiplied by pi_tcag
 
-    out <- sub_TN93__(pi_tcag, alpha, alpha, beta,
+    out <- sub_TN93__(mu, pi_tcag, alpha, alpha, beta,
                     gamma_shape, gamma_k, invariant, "K80")
 
     return(out)
@@ -321,16 +322,15 @@ sub_K80 <- function(alpha, beta, gamma_shape = NULL, gamma_k = 5, invariant = 0)
 
 #' @describeIn sub_models F81 model.
 #'
-#' @inheritParams sub_TN93
 #'
 #' @export
 #'
-sub_F81 <- function(pi_tcag, gamma_shape = NULL, gamma_k = 5, invariant = 0) {
+sub_F81 <- function(pi_tcag, mu = 1, gamma_shape = NULL, gamma_k = 5, invariant = 0) {
 
-    sub_arg_checks("F81", pi_tcag = pi_tcag,
+    sub_arg_checks(mu, "F81", pi_tcag = pi_tcag,
                    gamma_shape = gamma_shape, gamma_k = gamma_k, invariant = invariant)
 
-    out <- sub_TN93__(pi_tcag, 1, 1, 1,
+    out <- sub_TN93__(mu, pi_tcag, 1, 1, 1,
                     gamma_shape, gamma_k, invariant, "F81")
 
     return(out)
@@ -340,18 +340,16 @@ sub_F81 <- function(pi_tcag, gamma_shape = NULL, gamma_k = 5, invariant = 0) {
 #' @describeIn sub_models HKY85 model.
 #'
 #'
-#' @inheritParams sub_TN93
-#' @inheritParams sub_K80
 #'
 #' @export
 #'
 sub_HKY85 <- function(pi_tcag, alpha, beta,
-                      gamma_shape = NULL, gamma_k = 5, invariant = 0) {
+                      mu = 1, gamma_shape = NULL, gamma_k = 5, invariant = 0) {
 
-    sub_arg_checks("HKY85", pi_tcag = pi_tcag, alpha = alpha, beta = beta,
+    sub_arg_checks(mu, "HKY85", pi_tcag = pi_tcag, alpha = alpha, beta = beta,
                    gamma_shape = gamma_shape, gamma_k = gamma_k, invariant = invariant)
 
-    out <- sub_TN93__(pi_tcag, alpha, alpha, beta,
+    out <- sub_TN93__(mu, pi_tcag, alpha, alpha, beta,
                     gamma_shape, gamma_k, invariant, "HKY85")
 
     return(out)
@@ -361,17 +359,15 @@ sub_HKY85 <- function(pi_tcag, alpha, beta,
 #' @describeIn sub_models F84 model.
 #'
 #'
-#' @inheritParams sub_TN93
-#' @inheritParams sub_K80
 #' @param kappa The transition/transversion rate ratio.
 #'
 #' @export
 #'
 sub_F84 <- function(pi_tcag, beta, kappa,
-                    gamma_shape = NULL, gamma_k = 5, invariant = 0) {
+                    mu = 1, gamma_shape = NULL, gamma_k = 5, invariant = 0) {
 
 
-    sub_arg_checks("F84", pi_tcag = pi_tcag, beta = beta, kappa = kappa,
+    sub_arg_checks(mu, "F84", pi_tcag = pi_tcag, beta = beta, kappa = kappa,
                    gamma_shape = gamma_shape, gamma_k = gamma_k, invariant = invariant)
 
     pi_y = pi_tcag[1] + pi_tcag[2]
@@ -380,7 +376,7 @@ sub_F84 <- function(pi_tcag, beta, kappa,
     alpha_1 = (1 + kappa / pi_y) * beta
     alpha_2 = (1 + kappa / pi_r) * beta
 
-    out <- sub_TN93__(pi_tcag, alpha_1, alpha_2, beta,
+    out <- sub_TN93__(mu, pi_tcag, alpha_1, alpha_2, beta,
                     gamma_shape, gamma_k, invariant, "F84")
 
     return(out)
@@ -397,6 +393,8 @@ sub_F84 <- function(pi_tcag, beta, kappa,
 #' @param alpha_1 Substitution rate for T <-> C transition.
 #' @param alpha_2 Substitution rate for A <-> G transition.
 #' @param beta Substitution rate for transversions.
+#' @param mu Total rate of substitutions. Defaults to `1`, which makes branch lengths
+#'     in units of substitutions per site. Passing `NULL` results in no scaling.
 #' @param gamma_shape Numeric shape parameter for discrete Gamma distribution used for
 #'     among-site variability. Values must be greater than zero.
 #'     If this parameter is `NULL`, among-site variability is not included.
@@ -412,9 +410,9 @@ sub_F84 <- function(pi_tcag, beta, kappa,
 #' @export
 #'
 sub_TN93 <- function(pi_tcag, alpha_1, alpha_2, beta,
-                     gamma_shape = NULL, gamma_k = 5, invariant = 0) {
+                     mu = 1, gamma_shape = NULL, gamma_k = 5, invariant = 0) {
 
-    out <- sub_TN93__(pi_tcag, alpha_1, alpha_2, beta, gamma_shape, gamma_k,
+    out <- sub_TN93__(mu, pi_tcag, alpha_1, alpha_2, beta, gamma_shape, gamma_k,
                             invariant, "TN93")
 
     return(out)
@@ -433,10 +431,10 @@ sub_TN93 <- function(pi_tcag, alpha_1, alpha_2, beta,
 #'
 #' @noRd
 #'
-sub_TN93__ <- function(pi_tcag, alpha_1, alpha_2, beta,
+sub_TN93__ <- function(mu, pi_tcag, alpha_1, alpha_2, beta,
                        gamma_shape, gamma_k, invariant, model) {
 
-    sub_arg_checks("TN93", pi_tcag = pi_tcag,
+    sub_arg_checks(mu, "TN93", pi_tcag = pi_tcag,
                    alpha_1 = alpha_1, alpha_2 = alpha_2, beta = beta,
                    gamma_shape = gamma_shape, gamma_k = gamma_k, invariant = invariant)
     if (is.null(gamma_shape)) gamma_shape <- 0
@@ -444,8 +442,9 @@ sub_TN93__ <- function(pi_tcag, alpha_1, alpha_2, beta,
     if (!is_type(model, "character", 1L)) {
         stop("\nINNER ERROR: arg `model` to sub_TN93__ is not a single string.")
     }
+    if (is.null(mu)) mu <- -1
 
-    info_list <- sub_TN93_cpp(pi_tcag, alpha_1, alpha_2, beta, gamma_shape, gamma_k,
+    info_list <- sub_TN93_cpp(mu, pi_tcag, alpha_1, alpha_2, beta, gamma_shape, gamma_k,
                               invariant)
     info_list[["model"]] <- model
 
@@ -459,20 +458,21 @@ sub_TN93__ <- function(pi_tcag, alpha_1, alpha_2, beta,
 
 #' @describeIn sub_models GTR model.
 #'
-#' @inheritParams sub_TN93
 #' @param abcdef A vector of length 6 that contains the off-diagonal elements
 #'     for the substitution rate matrix.
 #'     See `vignette("sub-models")` for how the values are ordered in the matrix.
 #'
 #' @export
 #'
-sub_GTR <- function(pi_tcag, abcdef, gamma_shape = NULL, gamma_k = 5, invariant = 0) {
+sub_GTR <- function(pi_tcag, abcdef, mu = 1, gamma_shape = NULL, gamma_k = 5, invariant = 0) {
 
-    sub_arg_checks("GTR", pi_tcag = pi_tcag, abcdef = abcdef,
+    sub_arg_checks(mu, "GTR", pi_tcag = pi_tcag, abcdef = abcdef,
                    gamma_shape = gamma_shape, gamma_k = gamma_k, invariant = invariant)
     if (is.null(gamma_shape)) gamma_shape <- 0
 
-    info_list <- sub_GTR_cpp(pi_tcag, abcdef, gamma_shape, gamma_k, invariant)
+    if (is.null(mu)) mu <- -1
+
+    info_list <- sub_GTR_cpp(mu, pi_tcag, abcdef, gamma_shape, gamma_k, invariant)
 
     out <- sub_info$new(info_list)
 
@@ -487,18 +487,19 @@ sub_GTR <- function(pi_tcag, abcdef, gamma_shape = NULL, gamma_k = 5, invariant 
 #'     Item `Q[i,j]` is the rate of substitution from nucleotide `i` to nucleotide `j`.
 #'     Do not include indel rates here!
 #'     Values on the diagonal are calculated inside the function so are ignored.
-#' @inheritParams sub_TN93
 #'
 #' @export
 #'
 #'
-sub_UNREST <- function(Q, gamma_shape = NULL, gamma_k = 5, invariant = 0) {
+sub_UNREST <- function(Q, mu = 1, gamma_shape = NULL, gamma_k = 5, invariant = 0) {
 
-    sub_arg_checks("UNREST", Q = Q,
+    sub_arg_checks(mu, "UNREST", Q = Q,
                    gamma_shape = gamma_shape, gamma_k = gamma_k, invariant = invariant)
     if (is.null(gamma_shape)) gamma_shape <- 0
 
-    info_list <- sub_UNREST_cpp(Q, gamma_shape, gamma_k, invariant)
+    if (is.null(mu)) mu <- -1
+
+    info_list <- sub_UNREST_cpp(mu, Q, gamma_shape, gamma_k, invariant)
 
     out <- sub_info$new(info_list)
 
@@ -584,7 +585,7 @@ indel_info <- R6Class(
 #' Insertions and deletions (indels) specification
 #'
 #' Construct necessary information for insertions and deletions (indels) that will
-#' be used in `create_variants`.
+#' be used in `create_haplotypes`.
 #'
 #' All indels require the `rate` parameter, which specifies
 #' the overall indels rate among all lengths.
@@ -637,7 +638,7 @@ indel_info <- R6Class(
 #' @export
 #'
 #' @return An `indel_info` object, which is an R6 class that wraps the info needed for
-#' the `create_variants` function.
+#' the `create_haplotypes` function.
 #' It does not allow the user to directly manipulate the info inside, as that
 #' should be done using this function.
 #' You can use the `rates()` method to view the indel rates by size.

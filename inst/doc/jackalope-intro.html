@@ -1,15 +1,14 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 
 
 
@@ -116,9 +115,6 @@ padding-right: 2em;
 font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 font-size: 14px;
 line-height: 1.35;
-}
-#header {
-text-align: center;
 }
 #TOC {
 clear: both;
@@ -287,7 +283,8 @@ code > span.st { color: #d14; }
 code > span.co { color: #888888; font-style: italic; } 
 code > span.ot { color: #007020; } 
 code > span.al { color: #ff0000; font-weight: bold; } 
-code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61717; background-color: #e3d2d2; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
 </style>
 
 
@@ -305,163 +302,236 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 
 
 <p>This document provides brief examples of how <code>jackalope</code> can be used to generate sequencing data that can inform some common sampling decisions for HTS studies.</p>
-<p>For an example reference assembly, I simply simulated one of size 1 kb using the following code:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1">ref &lt;-<span class="st"> </span><span class="kw">create_genome</span>(<span class="dv">10</span>, <span class="fl">1e2</span>)</a></code></pre></div>
+<div id="generating-reference-genome" class="section level2">
+<h2>Generating reference genome</h2>
+<p>Here, I’ll show how to generate a reference genome based on an existing assembly or via simulated DNA sequences.</p>
+<p>To show how an existing assembly is read in <code>jackalope</code>, the code below processes the assembly for <em>Drosophila melanogaster</em> (version 6.27) downloaded from <a href="https://flybase.org" class="uri">https://flybase.org</a>. It reads the compressed FASTA file, filters out scaffolds by using a size threshold, removes the Y chromosome (to avoid having both an X and Y in the same haplotype), and merges the left and right arms of chromosomes 2 and 3. It lastly sets the names of chromosomes 2 and 3 to be <code>&quot;2&quot;</code> and <code>&quot;3&quot;</code>, respectively.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1">ref &lt;-<span class="st"> </span><span class="kw">read_fasta</span>(<span class="st">&quot;dmel-6.27.fasta.gz&quot;</span>, <span class="dt">cut_names =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb1-2" data-line-number="2">ref<span class="op">$</span><span class="kw">filter_chroms</span>(<span class="fl">1e6</span>, <span class="dt">method =</span> <span class="st">&quot;size&quot;</span>)</a>
+<a class="sourceLine" id="cb1-3" data-line-number="3">ref<span class="op">$</span><span class="kw">rm_chroms</span>(<span class="st">&quot;Y&quot;</span>)</a>
+<a class="sourceLine" id="cb1-4" data-line-number="4">ref<span class="op">$</span><span class="kw">merge_chroms</span>(<span class="kw">c</span>(<span class="st">&quot;2L&quot;</span>, <span class="st">&quot;2R&quot;</span>))</a>
+<a class="sourceLine" id="cb1-5" data-line-number="5">ref<span class="op">$</span><span class="kw">merge_chroms</span>(<span class="kw">c</span>(<span class="st">&quot;3L&quot;</span>, <span class="st">&quot;3R&quot;</span>))</a>
+<a class="sourceLine" id="cb1-6" data-line-number="6">names &lt;-<span class="st"> </span>ref<span class="op">$</span><span class="kw">chrom_names</span>()</a>
+<a class="sourceLine" id="cb1-7" data-line-number="7">names[<span class="kw">grepl</span>(<span class="st">&quot;^2&quot;</span>, names)] &lt;-<span class="st"> &quot;2&quot;</span></a>
+<a class="sourceLine" id="cb1-8" data-line-number="8">names[<span class="kw">grepl</span>(<span class="st">&quot;^3&quot;</span>, names)] &lt;-<span class="st"> &quot;3&quot;</span></a>
+<a class="sourceLine" id="cb1-9" data-line-number="9">ref<span class="op">$</span><span class="kw">set_names</span>(names)</a></code></pre></div>
+<p>For the rest of the document, I will use a simulated genome for simplicity (and so that I don’t have to store the <em>D. melanogaster</em> genome inside this package). Here is how I simulated a genome of size <span class="math inline">\(\sim 1\)</span> kb split among 4 chromosomes, with the same names as the chromosomes in the <em>D. melanogaster</em> genome:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">ref &lt;-<span class="st"> </span><span class="kw">create_genome</span>(<span class="dt">n_chroms =</span> <span class="dv">4</span>,</a>
+<a class="sourceLine" id="cb2-2" data-line-number="2">                     <span class="dt">len_mean =</span> <span class="fl">1e3</span> <span class="op">/</span><span class="st"> </span><span class="dv">4</span>,</a>
+<a class="sourceLine" id="cb2-3" data-line-number="3">                     <span class="dt">len_sd =</span> <span class="dv">10</span>)</a>
+<a class="sourceLine" id="cb2-4" data-line-number="4">ref<span class="op">$</span><span class="kw">set_names</span>(<span class="kw">c</span>(<span class="dv">2</span><span class="op">:</span><span class="dv">4</span>, <span class="st">&quot;X&quot;</span>))</a></code></pre></div>
 <p>This resulted in the following <code>ref_genome</code> object:</p>
-<pre><code>#&gt; &lt; Set of 10 chromosomes &gt;
-#&gt; # Total size: 1,000 bp
+<pre><code>#&gt; &lt; Set of 4 chromosomes &gt;
+#&gt; # Total size: 961 bp
 #&gt;   name                             chromosome                             length
-#&gt; chrom0     TGTTCTCACGGAAAACGGGAAGTTTTTG...GTCACGTCAATGGAGTCTTGGGTCTCTA       100
-#&gt; chrom1     CCTCATGTTTCTAGTAGCTGCAACGCTC...TTGTGAACTCCCAGAGGCCTATGCTAAA       100
-#&gt; chrom2     AAATCGTCAAGGCTTCGACGTAGAGCCG...CATTGCAGTTCGGAACCGAGGACGGGCG       100
-#&gt; chrom3     TTCAGGCAGTGTGGTCTACTGGGCGCAG...TCAGAGCGATAAGATAGATCCGGATAAT       100
-#&gt; chrom4     AGGCTGACACCGCCGATGGCCGGGTCCA...GGGCGTCGGGCGAATGCTCGCATGCGAA       100
-#&gt; chrom5     CACTGAACGTTAGCAACTTCATCTACAT...GATTTCCTATCTGTGTGTTAGGACTATA       100
-#&gt; chrom6     GCGGTTAAGACCGAACCATCCGTGGGAC...AAAGTCTCTCGCAAGCCAGTCAGTGCCC       100
-#&gt; chrom7     CCGAATGCCAGTAAGCTCGAGCGTATAA...GTAAGCGTAACGCGCGTGCTGGTTTCGT       100
-#&gt; chrom8     TATAGCTAGACCGCCTCCGCGTACGACC...CGGCCGGGCTATCGGGCCTGGTAGGGGG       100
-#&gt; chrom9     TAAAGAGTGGGCGGGTCCGTAAAGTACC...CCACGAAGGCTCACGGTCACAATAGGTT       100</code></pre>
-<p>For molecular-evolution information, I used the TN93 model, an insertion rate of <code>2e-5</code> for lengths from 1 to 10, and a deletion rate of <code>1e-5</code> for lengths from 1 to 40. By default, the <code>indel</code> function creates rates that are proportional to <code>exp(-L)</code> for indel length <code>L</code> from 1 to the maximum length.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">sub &lt;-<span class="st"> </span><span class="kw">sub_TN93</span>(<span class="dt">pi_tcag =</span> <span class="kw">c</span>(<span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.3</span>, <span class="fl">0.4</span>),</a>
-<a class="sourceLine" id="cb3-2" data-line-number="2">                <span class="dt">alpha_1 =</span> <span class="fl">0.0001</span>, <span class="dt">alpha_2 =</span> <span class="fl">0.0002</span>,</a>
-<a class="sourceLine" id="cb3-3" data-line-number="3">                <span class="dt">beta =</span> <span class="fl">0.00015</span>)</a>
-<a class="sourceLine" id="cb3-4" data-line-number="4">ins &lt;-<span class="st"> </span><span class="kw">indels</span>(<span class="dt">rate =</span> <span class="fl">2e-5</span>, <span class="dt">max_length =</span> <span class="dv">10</span>)</a>
-<a class="sourceLine" id="cb3-5" data-line-number="5">del &lt;-<span class="st"> </span><span class="kw">indels</span>(<span class="dt">rate =</span> <span class="fl">1e-5</span>, <span class="dt">max_length =</span> <span class="dv">40</span>)</a></code></pre></div>
+#&gt; 2          TCTCACGGAAAACGGGAAGTTTTTGGCC...CAAGGCTTCGACGTAGAGCCGGTGGATT       232
+#&gt; 3          GCTCCGGCAGCATCGGCTTCCGTGATCA...GGACTGCGGGGGTTCTAACGGGCGTCGG       245
+#&gt; 4          GAATGCTCGCATGCGAACACTGAACGTT...GAATGCCAGTAAGCTCGAGCGTATAAGG       247
+#&gt; X          CCCCATTTCAGCAACGAAGTCGATCGCA...GTTCAATCACGCGAAAAAAAACACGTCA       237</code></pre>
+<p>For the examples below, we’ll pretend this is our <em>D. melanogaster</em> genome.</p>
+</div>
+<div id="molecular-evolution-information" class="section level2">
+<h2>Molecular evolution information</h2>
+<p>To generate variant haplotypes based on our reference genome, we need molecular evolution information (unless passing a Variant Call Format, or VCF, file). For molecular-evolution information, I used the JC69 model for simplicity. Mutation rates were chosen from the <code>evo_rates</code> object present inside <code>jackalope</code>, which stores Table 1 from <a href="http://dx.doi.org/10.1534/g3.116.030890">Sung et al. (2016)</a>. The substitution and indel rates were the values from <code>evo_rates</code> specific to <em>D. melanogaster</em>. The <code>mu</code> parameter to <code>sub_JC69</code> function was set to <code>NULL</code> because the default behavior of all substitution-model functions in <code>jackalope</code> is to scale rate matrices such that branch lengths are in units of substitutions per site. In this case, I don’t want to scale rate matrices because our branch lengths will be in generations. <a href="https://doi.org/10.1093/nar/gkg745">Zhang and Gerstein (2003)</a> found a 1 to 2.90 ratio of insertions to deletions, and described relative rates of indels of various sizes using a power-law relationship. To approximate the distributions they described, relative rates were derived from a Lavalette distribution with <span class="math inline">\(L = 60\)</span> and <span class="math inline">\(a = 1.60\)</span> for insertions and <span class="math inline">\(a = 1.51\)</span> for deletions. The <span class="math inline">\(\theta\)</span> parameter is the population-scaled mutation rate, which we can get directly from <code>evo_rates</code> for <em>D. melanogaster</em>. Lastly, <span class="math inline">\(N_0\)</span> is the effective population size for <em>D. melanogaster</em>, which is used in a few instances below because <code>scrm</code> outputs branch lengths in units of <span class="math inline">\(4 N_0\)</span> generations.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">sub_rate &lt;-<span class="st"> </span>evo_rates<span class="op">$</span>subs[evo_rates<span class="op">$</span>species <span class="op">==</span><span class="st"> &quot;Drosophila melanogaster&quot;</span>]</a>
+<a class="sourceLine" id="cb4-2" data-line-number="2">indel_rate &lt;-<span class="st"> </span>evo_rates<span class="op">$</span>indels[evo_rates<span class="op">$</span>species <span class="op">==</span><span class="st"> &quot;Drosophila melanogaster&quot;</span>]</a>
+<a class="sourceLine" id="cb4-3" data-line-number="3"><span class="co"># Because both are in units of 10^-10 events per site per generation:</span></a>
+<a class="sourceLine" id="cb4-4" data-line-number="4">sub_rate &lt;-<span class="st"> </span>sub_rate <span class="op">*</span><span class="st"> </span><span class="fl">1e-10</span></a>
+<a class="sourceLine" id="cb4-5" data-line-number="5">indel_rate &lt;-<span class="st"> </span>indel_rate <span class="op">*</span><span class="st"> </span><span class="fl">1e-10</span></a>
+<a class="sourceLine" id="cb4-6" data-line-number="6"></a>
+<a class="sourceLine" id="cb4-7" data-line-number="7">sub &lt;-<span class="st"> </span><span class="kw">sub_JC69</span>(<span class="dt">lambda =</span> sub_rate, <span class="dt">mu =</span> <span class="ot">NULL</span>)</a>
+<a class="sourceLine" id="cb4-8" data-line-number="8">ins &lt;-<span class="st"> </span><span class="kw">indels</span>(<span class="dt">rate =</span> indel_rate, <span class="dt">max_length =</span> <span class="dv">60</span>,<span class="dt">a =</span> <span class="fl">1.60</span>)</a>
+<a class="sourceLine" id="cb4-9" data-line-number="9">del &lt;-<span class="st"> </span><span class="kw">indels</span>(<span class="dt">rate =</span> indel_rate, <span class="dt">max_length =</span> <span class="dv">60</span>, <span class="dt">a =</span> <span class="fl">1.51</span>)</a>
+<a class="sourceLine" id="cb4-10" data-line-number="10"></a>
+<a class="sourceLine" id="cb4-11" data-line-number="11">theta &lt;-<span class="st"> </span>evo_rates[evo_rates<span class="op">$</span>species <span class="op">==</span><span class="st"> &quot;Drosophila melanogaster&quot;</span>,<span class="st">&quot;theta_s&quot;</span>]</a>
+<a class="sourceLine" id="cb4-12" data-line-number="12"></a>
+<a class="sourceLine" id="cb4-13" data-line-number="13"><span class="co"># Originally in units of 1e6 individuals</span></a>
+<a class="sourceLine" id="cb4-14" data-line-number="14">N0 &lt;-<span class="st"> </span>evo_rates[evo_rates<span class="op">$</span>species <span class="op">==</span><span class="st"> &quot;Drosophila melanogaster&quot;</span>, <span class="st">&quot;Ne&quot;</span>] <span class="op">*</span><span class="st"> </span><span class="fl">1e6</span></a></code></pre></div>
+<p>When generating any haplotypes below, these objects will be used inside <code>create_haplotypes</code> to specify molecular evolution information.</p>
+</div>
 <div id="assembling-a-genome" class="section level2">
 <h2>Assembling a genome</h2>
-<p>The example here produces FASTQ files from the known reference assembly that could test strategies for how to assemble a similar genome using HTS data.</p>
-<p>The first strategy is to use only PacBio sequencing. The PacBio Sequel system produces up to 500,000 reads per Single Molecule, Real-Time (SMRT) cell, so you could run the following for two cells:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw">pacbio</span>(ref, <span class="dt">out_prefix =</span> <span class="st">&quot;pacbio&quot;</span>, <span class="dt">n_reads =</span> <span class="dv">2</span> <span class="op">*</span><span class="st"> </span><span class="fl">500e3</span>)</a></code></pre></div>
+<div id="based-on-a-reference" class="section level3">
+<h3>Based on a reference</h3>
+<p>The examples here produce FASTQ files from the known reference assembly that could test strategies for how to assemble a similar genome using HTS data.</p>
+<p>The first strategy is to use only PacBio sequencing. The PacBio Sequel system produces up to 500,000 reads per Single Molecule, Real-Time (SMRT) cell, so you could run the following for two cells (with the file <code>pacbio_R1.fq</code> as output):</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw">pacbio</span>(ref, <span class="dt">out_prefix =</span> <span class="st">&quot;pacbio&quot;</span>, <span class="dt">n_reads =</span> <span class="dv">2</span> <span class="op">*</span><span class="st"> </span><span class="fl">500e3</span>)</a></code></pre></div>
 <p>An alternative, hybrid strategy uses 1 SMRT cell of PacBio sequencing and 1 lane (<span class="math inline">\(\sim 500\)</span> million reads) of <span class="math inline">\(2 \times 100\)</span>bp Illumina sequencing on the HiSeq 2500 system (the default Illumina system in <code>jackalope</code>):</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw">pacbio</span>(ref, <span class="dt">out_prefix =</span> <span class="st">&quot;pacbio&quot;</span>, <span class="dt">n_reads =</span> <span class="fl">500e3</span>)</a>
-<a class="sourceLine" id="cb5-2" data-line-number="2"><span class="kw">illumina</span>(ref, <span class="dt">out_prefix =</span> <span class="st">&quot;illumina&quot;</span>, <span class="dt">n_reads =</span> <span class="fl">500e6</span>, <span class="dt">paired =</span> <span class="ot">TRUE</span>,</a>
-<a class="sourceLine" id="cb5-3" data-line-number="3">         <span class="dt">read_length =</span> <span class="dv">100</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw">pacbio</span>(ref, <span class="dt">out_prefix =</span> <span class="st">&quot;pacbio&quot;</span>, <span class="dt">n_reads =</span> <span class="fl">500e3</span>)</a>
+<a class="sourceLine" id="cb6-2" data-line-number="2"><span class="kw">illumina</span>(ref, <span class="dt">out_prefix =</span> <span class="st">&quot;illumina&quot;</span>, <span class="dt">n_reads =</span> <span class="fl">500e6</span>, <span class="dt">paired =</span> <span class="ot">TRUE</span>,</a>
+<a class="sourceLine" id="cb6-3" data-line-number="3">         <span class="dt">read_length =</span> <span class="dv">100</span>)</a></code></pre></div>
 <p>The last strategy combines 1 lane of <span class="math inline">\(2 \times 100\)</span>bp Illumina HiSeq 2500 sequencing with 1 flow cell of <span class="math inline">\(2 \times 250\)</span>bp mate-pair sequencing on an Illumina MiSeq v3. The mate-pair sequencing uses longer fragments (defaults are mean of 400 and standard deviation of 100) to better cover highly repetitive regions.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw">illumina</span>(ref, <span class="dt">out_prefix =</span> <span class="st">&quot;ill_pe&quot;</span>, <span class="dt">n_reads =</span> <span class="fl">500e6</span>, <span class="dt">paired =</span> <span class="ot">TRUE</span>,</a>
-<a class="sourceLine" id="cb6-2" data-line-number="2">         <span class="dt">read_length =</span> <span class="dv">100</span>)</a>
-<a class="sourceLine" id="cb6-3" data-line-number="3"><span class="kw">illumina</span>(ref, <span class="dt">out_prefix =</span> <span class="st">&quot;ill_mp&quot;</span>, <span class="dt">seq_sys =</span> <span class="st">&quot;MSv3&quot;</span>,</a>
-<a class="sourceLine" id="cb6-4" data-line-number="4">         <span class="dt">read_length =</span> <span class="dv">250</span>, <span class="dt">n_reads =</span> <span class="fl">50e6</span>, <span class="dt">matepair =</span> <span class="ot">TRUE</span>, </a>
-<a class="sourceLine" id="cb6-5" data-line-number="5">         <span class="dt">frag_mean =</span> <span class="dv">3000</span>, <span class="dt">frag_sd =</span> <span class="dv">500</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw">illumina</span>(ref, <span class="dt">out_prefix =</span> <span class="st">&quot;ill_pe&quot;</span>, <span class="dt">n_reads =</span> <span class="fl">500e6</span>, <span class="dt">paired =</span> <span class="ot">TRUE</span>,</a>
+<a class="sourceLine" id="cb7-2" data-line-number="2">         <span class="dt">read_length =</span> <span class="dv">100</span>)</a>
+<a class="sourceLine" id="cb7-3" data-line-number="3"><span class="kw">illumina</span>(ref, <span class="dt">out_prefix =</span> <span class="st">&quot;ill_mp&quot;</span>, <span class="dt">seq_sys =</span> <span class="st">&quot;MSv3&quot;</span>,</a>
+<a class="sourceLine" id="cb7-4" data-line-number="4">         <span class="dt">read_length =</span> <span class="dv">250</span>, <span class="dt">n_reads =</span> <span class="fl">50e6</span>, <span class="dt">matepair =</span> <span class="ot">TRUE</span>, </a>
+<a class="sourceLine" id="cb7-5" data-line-number="5">         <span class="dt">frag_mean =</span> <span class="dv">3000</span>, <span class="dt">frag_sd =</span> <span class="dv">500</span>)</a></code></pre></div>
+<p>These data could then be used to compare genome assembly performance between the strategies above, or between programs within a given strategy. Extensions of these tests include adjusting sequencing depth, sequencing platform, and error rates.</p>
+</div>
+<div id="based-on-a-diploid-individual" class="section level3">
+<h3>Based on a diploid individual</h3>
+<p>For diploid species, scientists won’t be sampling a haploid reference, and heterozygosity can be a real problem for the assembly process. So below I’ll show you how to simulate a diploid individual and create reads based on that. I’ll just show the hybrid assembly strategy, but the others simply differ in the sequencing step as shown above.</p>
+<p>First, we’ll simulate two haplotypes based on the <span class="math inline">\(\theta\)</span> (population-scaled mutation rate) and the other molecular evolution information for <em>D. melanogaster</em> we got from the <code>evo_rates</code> object earlier. I’m also renaming the haplotypes.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">haps &lt;-<span class="st"> </span><span class="kw">create_haplotypes</span>(ref, <span class="kw">haps_theta</span>(<span class="dt">theta =</span> theta, <span class="dt">n_haps =</span> <span class="dv">2</span>), </a>
+<a class="sourceLine" id="cb8-2" data-line-number="2">                          sub, ins, del)</a>
+<a class="sourceLine" id="cb8-3" data-line-number="3">haps<span class="op">$</span><span class="kw">set_names</span>(<span class="kw">c</span>(<span class="st">&quot;A&quot;</span>, <span class="st">&quot;B&quot;</span>))</a></code></pre></div>
+<p>This results in the following <code>haplotypes</code> object:</p>
+<pre><code>#&gt;                               &lt;&lt; haplotypes object &gt;&gt;
+#&gt; # Haplotypes: 2
+#&gt; # Mutations: 21
+#&gt; 
+#&gt;                           &lt;&lt; Reference genome info: &gt;&gt;
+#&gt; &lt; Set of 4 chromosomes &gt;
+#&gt; # Total size: 961 bp
+#&gt;   name                             chromosome                             length
+#&gt; 2          TCTCACGGAAAACGGGAAGTTTTTGGCC...CAAGGCTTCGACGTAGAGCCGGTGGATT       232
+#&gt; 3          GCTCCGGCAGCATCGGCTTCCGTGATCA...GGACTGCGGGGGTTCTAACGGGCGTCGG       245
+#&gt; 4          GAATGCTCGCATGCGAACACTGAACGTT...GAATGCCAGTAAGCTCGAGCGTATAAGG       247
+#&gt; X          CCCCATTTCAGCAACGAAGTCGATCGCA...GTTCAATCACGCGAAAAAAAACACGTCA       237</code></pre>
+<p>We generate 1 SMRT cell of PacBio sequencing and 1 lane of <span class="math inline">\(2 \times 100\)</span>bp Illumina sequencing on the HiSeq 2500 system as before, except using the new <code>haps</code> object instead of <code>ref</code>:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw">pacbio</span>(haps, <span class="dt">out_prefix =</span> <span class="st">&quot;pacbio&quot;</span>, <span class="dt">n_reads =</span> <span class="fl">500e3</span>)</a>
+<a class="sourceLine" id="cb10-2" data-line-number="2"><span class="kw">illumina</span>(haps, <span class="dt">out_prefix =</span> <span class="st">&quot;illumina&quot;</span>, <span class="dt">n_reads =</span> <span class="fl">500e6</span>, <span class="dt">paired =</span> <span class="ot">TRUE</span>,</a>
+<a class="sourceLine" id="cb10-3" data-line-number="3">         <span class="dt">read_length =</span> <span class="dv">100</span>)</a></code></pre></div>
+<p>If we want to save the information for these haplotypes, we can output FASTA files (one per haplotype) or a VCF file:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="kw">write_fasta</span>(haps, <span class="st">&quot;haps&quot;</span>)</a>
+<a class="sourceLine" id="cb11-2" data-line-number="2"><span class="kw">write_vcf</span>(haps, <span class="st">&quot;haps&quot;</span>, <span class="dt">sample_matrix =</span> <span class="kw">cbind</span>(<span class="dv">1</span>, <span class="dv">2</span>))</a></code></pre></div>
+<p>This would result in the following files being generated: <code>haps__A.fa</code>, <code>haps__B.fa</code>, and <code>haps.vcf</code>. The <code>sample_matrix</code> argument to <code>write_vcf</code> states that the first two (i.e., all) haplotypes are from the first (and only) sample. These data could test different assembly strategies, similar to the above section, except that, for diploid organisms, it includes heterozygosity. Increasing the <span class="math inline">\(\theta\)</span> parameter will result in more heterozygosity, which is an obvious extension of these tests.</p>
+</div>
 </div>
 <div id="estimating-divergence-between-populations" class="section level2">
 <h2>Estimating divergence between populations</h2>
-<p>Here, I will demonstrate how to generate population-genomic data of a type that might be used to estimate the divergence between two populations. I first use the <code>scrm</code> package to conduct coalescent simulations that will generate segregating sites for 10 haploid variants from the reference genome. Five of the variants are from one population, five from another. The symmetrical migration rate is 100 individuals per generation. I set the population-scaled mutation rate (<span class="math inline">\(\theta = 4 N_0 \mu\)</span>) to <code>10</code> for this example.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw">library</span>(scrm)</a>
-<a class="sourceLine" id="cb7-2" data-line-number="2">ssites &lt;-<span class="st"> </span><span class="kw">scrm</span>(<span class="kw">paste</span>(<span class="st">&quot;10&quot;</span>, ref<span class="op">$</span><span class="kw">n_chroms</span>(), <span class="st">&quot;-t 10 -I 2 5 5 100&quot;</span>))</a></code></pre></div>
-<p>Using the previously created objects for molecular evolution information (<code>sub</code>, <code>ins</code>, and <code>del</code>), I create variants from the reference genome:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">vars &lt;-<span class="st"> </span><span class="kw">create_variants</span>(ref, <span class="kw">vars_ssites</span>(ssites), sub, ins, del)</a></code></pre></div>
-<p>This results in the following set of variants:</p>
-<pre><code>#&gt;                               &lt;&lt; Variants object &gt;&gt;
-#&gt; # Variants: 10
-#&gt; # Mutations: 1,505
+<p>Here, I will demonstrate how to generate population-genomic data of a type that might be used to estimate the divergence between two populations. I first use the <code>scrm</code> package to conduct coalescent simulations that will generate segregating sites for 10 variant haplotypes from the reference genome. Five of the haplotypes are from one population, five from another. The symmetrical migration rate is 100 individuals per generation. I used a recombination rate of 1 (the expected number of recombinations on the locus per <span class="math inline">\(4 N_0\)</span> generations). I specify the recombination rate and chromosome size for <code>scrm</code> using the command <code>-r 1 C</code> for chromosome size <code>C</code>. I used the population-scaled mutation rate for <em>D. melanogaster</em>, scaled such that the mutation rate (<span class="math inline">\(\mu\)</span>) is in units of mutations per <span class="math inline">\(4 N_0\)</span> generations, where <span class="math inline">\(N_0\)</span> is the population size. For <span class="math inline">\(N_0\)</span>, I’m using the effective population size for <em>D. melanogaster</em>, per <code>evo_rates</code>. The other code in the chunk below is to convert the output to look like that from the <code>scrm</code> R package, which can be easily processed by <code>jackalope</code>.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1"><span class="kw">library</span>(scrm)</a>
+<a class="sourceLine" id="cb12-2" data-line-number="2"><span class="co"># Function to run scrm for one chromosome and format output</span></a>
+<a class="sourceLine" id="cb12-3" data-line-number="3">one_chrom &lt;-<span class="st"> </span><span class="cf">function</span>(.size) {</a>
+<a class="sourceLine" id="cb12-4" data-line-number="4">    ssites &lt;-<span class="st"> </span><span class="kw">scrm</span>(<span class="kw">sprintf</span>(<span class="st">&quot;10 1 -t %.4f -r 1 %i -I 2 5 5 100&quot;</span>, theta <span class="op">*</span><span class="st"> </span><span class="dv">4</span> <span class="op">*</span><span class="st"> </span>N0, .size))</a>
+<a class="sourceLine" id="cb12-5" data-line-number="5">    <span class="kw">return</span>(ssites<span class="op">$</span>seg_sites[[<span class="dv">1</span>]])</a>
+<a class="sourceLine" id="cb12-6" data-line-number="6">}</a>
+<a class="sourceLine" id="cb12-7" data-line-number="7">ssites &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="dt">seg_sites =</span> <span class="kw">lapply</span>(ref<span class="op">$</span><span class="kw">sizes</span>(), one_chrom))</a></code></pre></div>
+<p>Using the previously created objects for molecular evolution information and the <code>haps_ssites</code> function, I create haplotypes from the reference genome:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">haps &lt;-<span class="st"> </span><span class="kw">create_haplotypes</span>(ref, <span class="kw">haps_ssites</span>(ssites), sub, ins, del)</a></code></pre></div>
+<p>This results in the following set of haplotypes:</p>
+<pre><code>#&gt;                               &lt;&lt; haplotypes object &gt;&gt;
+#&gt; # Haplotypes: 10
+#&gt; # Mutations: 2,553
 #&gt; 
 #&gt;                           &lt;&lt; Reference genome info: &gt;&gt;
-#&gt; &lt; Set of 10 chromosomes &gt;
-#&gt; # Total size: 1,000 bp
+#&gt; &lt; Set of 4 chromosomes &gt;
+#&gt; # Total size: 961 bp
 #&gt;   name                             chromosome                             length
-#&gt; chrom0     TGTTCTCACGGAAAACGGGAAGTTTTTG...GTCACGTCAATGGAGTCTTGGGTCTCTA       100
-#&gt; chrom1     CCTCATGTTTCTAGTAGCTGCAACGCTC...TTGTGAACTCCCAGAGGCCTATGCTAAA       100
-#&gt; chrom2     AAATCGTCAAGGCTTCGACGTAGAGCCG...CATTGCAGTTCGGAACCGAGGACGGGCG       100
-#&gt; chrom3     TTCAGGCAGTGTGGTCTACTGGGCGCAG...TCAGAGCGATAAGATAGATCCGGATAAT       100
-#&gt; chrom4     AGGCTGACACCGCCGATGGCCGGGTCCA...GGGCGTCGGGCGAATGCTCGCATGCGAA       100
-#&gt; chrom5     CACTGAACGTTAGCAACTTCATCTACAT...GATTTCCTATCTGTGTGTTAGGACTATA       100
-#&gt; chrom6     GCGGTTAAGACCGAACCATCCGTGGGAC...AAAGTCTCTCGCAAGCCAGTCAGTGCCC       100
-#&gt; chrom7     CCGAATGCCAGTAAGCTCGAGCGTATAA...GTAAGCGTAACGCGCGTGCTGGTTTCGT       100
-#&gt; chrom8     TATAGCTAGACCGCCTCCGCGTACGACC...CGGCCGGGCTATCGGGCCTGGTAGGGGG       100
-#&gt; chrom9     TAAAGAGTGGGCGGGTCCGTAAAGTACC...CCACGAAGGCTCACGGTCACAATAGGTT       100</code></pre>
-<p>For a file of true divergences from the reference genome, the <code>write_vcf</code> function writes the <code>variants</code> object to a VCF file:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw">write_vcf</span>(vars, <span class="st">&quot;variants&quot;</span>)</a></code></pre></div>
+#&gt; 2          TCTCACGGAAAACGGGAAGTTTTTGGCC...CAAGGCTTCGACGTAGAGCCGGTGGATT       232
+#&gt; 3          GCTCCGGCAGCATCGGCTTCCGTGATCA...GGACTGCGGGGGTTCTAACGGGCGTCGG       245
+#&gt; 4          GAATGCTCGCATGCGAACACTGAACGTT...GAATGCCAGTAAGCTCGAGCGTATAAGG       247
+#&gt; X          CCCCATTTCAGCAACGAAGTCGATCGCA...GTTCAATCACGCGAAAAAAAACACGTCA       237</code></pre>
+<p>For a file of true divergences from the reference genome, the <code>write_vcf</code> function writes the <code>haplotypes</code> object to a VCF file:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1"><span class="kw">write_vcf</span>(haps, <span class="st">&quot;haplotypes&quot;</span>)</a></code></pre></div>
 <p>Lastly, I simulate 1 lane of <span class="math inline">\(2 \times 100\)</span>bp Illumina HiSeq 2500 sequencing. In this case, individuals within a population are pooled, and the population sequences are derived from are identified by barcodes.</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="kw">illumina</span>(vars, <span class="dt">out_prefix =</span> <span class="st">&quot;vars_illumina&quot;</span>, <span class="dt">n_reads =</span> <span class="fl">500e6</span>, <span class="dt">paired =</span> <span class="ot">TRUE</span>,</a>
-<a class="sourceLine" id="cb11-2" data-line-number="2">         <span class="dt">read_length =</span> <span class="dv">100</span>, <span class="dt">barcodes =</span> <span class="kw">c</span>(<span class="kw">rep</span>(<span class="st">&quot;AACCGCGG&quot;</span>, <span class="dv">20</span>), </a>
-<a class="sourceLine" id="cb11-3" data-line-number="3">                                         <span class="kw">rep</span>(<span class="st">&quot;GGTTATAA&quot;</span>, <span class="dv">20</span>)))</a></code></pre></div>
-<p>The below example instead has each individual variant’s reads output to separate FASTQ files:</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1"><span class="kw">illumina</span>(vars, <span class="dt">out_prefix =</span> <span class="st">&quot;vars_illumina&quot;</span>, <span class="dt">n_reads =</span> <span class="fl">500e6</span>, <span class="dt">paired =</span> <span class="ot">TRUE</span>,</a>
-<a class="sourceLine" id="cb12-2" data-line-number="2">         <span class="dt">read_length =</span> <span class="dv">100</span>, <span class="dt">sep_files =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="kw">illumina</span>(haps, <span class="dt">out_prefix =</span> <span class="st">&quot;haps_illumina&quot;</span>, <span class="dt">n_reads =</span> <span class="fl">500e6</span>, <span class="dt">paired =</span> <span class="ot">TRUE</span>,</a>
+<a class="sourceLine" id="cb16-2" data-line-number="2">         <span class="dt">read_length =</span> <span class="dv">100</span>, <span class="dt">barcodes =</span> <span class="kw">c</span>(<span class="kw">rep</span>(<span class="st">&quot;AACCGCGG&quot;</span>, <span class="dv">5</span>), </a>
+<a class="sourceLine" id="cb16-3" data-line-number="3">                                         <span class="kw">rep</span>(<span class="st">&quot;GGTTATAA&quot;</span>, <span class="dv">5</span>)))</a></code></pre></div>
+<p>The below example instead has each individual haplotype’s reads output to separate FASTQ files:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1"><span class="kw">illumina</span>(haps, <span class="dt">out_prefix =</span> <span class="st">&quot;haps_illumina&quot;</span>, <span class="dt">n_reads =</span> <span class="fl">500e6</span>, <span class="dt">paired =</span> <span class="ot">TRUE</span>,</a>
+<a class="sourceLine" id="cb17-2" data-line-number="2">         <span class="dt">read_length =</span> <span class="dv">100</span>, <span class="dt">sep_files =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
+<p>The <span class="math inline">\(F_{ST}\)</span> calculated from the resulting VCF file could then be compared to output from various programs to inform which works best in a particular case. For uncertain population parameters (e.g., migration rates), output from multiple calls to <code>scrm</code> varying the parameter of interest could be input to the <code>jackalope</code> pipeline above to identify the conditions under which one program might have an advantage over another.</p>
 </div>
 <div id="constructing-a-phylogeny" class="section level2">
 <h2>Constructing a phylogeny</h2>
 <div id="from-one-phylogenetic-tree" class="section level3">
 <h3>From one phylogenetic tree</h3>
-<p>This section shows how <code>jackalope</code> can generate variants from a phylogeny, then simulate sequencing data from those variants to test phylogeny reconstruction methods. First, I generated a random coalescent tree of 10 species using the <code>ape</code> package.</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">tree &lt;-<span class="st"> </span><span class="kw">rcoal</span>(<span class="dv">10</span>)</a></code></pre></div>
-<p>Then I input that to the <code>create_variants</code> function alongside the molecular evolution information.</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1">vars &lt;-<span class="st"> </span><span class="kw">create_variants</span>(ref, <span class="kw">vars_phylo</span>(tree), sub, ins, del)</a></code></pre></div>
-<p>This results in the following <code>variants</code> object:</p>
-<pre><code>#&gt;                               &lt;&lt; Variants object &gt;&gt;
-#&gt; # Variants: 10
-#&gt; # Mutations: 3
+<p>This section shows how <code>jackalope</code> can generate haplotypes from a phylogeny, then simulate sequencing data from those haplotypes to test phylogeny reconstruction methods. First, I simulated a random species tree of 10 species, then scaled it to have a maximum tree depth of <span class="math inline">\(4 N_0\)</span> generations:</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1">tree &lt;-<span class="st"> </span><span class="kw">rcoal</span>(<span class="dv">10</span>)</a>
+<a class="sourceLine" id="cb18-2" data-line-number="2">tree<span class="op">$</span>edge.length &lt;-<span class="st"> </span><span class="dv">4</span> <span class="op">*</span><span class="st"> </span>N0 <span class="op">*</span><span class="st"> </span>tree<span class="op">$</span>edge.length <span class="op">/</span><span class="st"> </span><span class="kw">max</span>(<span class="kw">node.depth.edgelength</span>(tree))</a></code></pre></div>
+<p>Function <code>haps_phylo</code> organizes and checks the <code>tree</code> object, and including it with the mutation-type information allowed me to create haplotypes based on this phylogeny:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1">haps &lt;-<span class="st"> </span><span class="kw">create_haplotypes</span>(ref, <span class="kw">haps_phylo</span>(tree), sub, ins, del)</a></code></pre></div>
+<p>This results in the following <code>haplotypes</code> object:</p>
+<pre><code>#&gt;                               &lt;&lt; haplotypes object &gt;&gt;
+#&gt; # Haplotypes: 10
+#&gt; # Mutations: 547
 #&gt; 
 #&gt;                           &lt;&lt; Reference genome info: &gt;&gt;
-#&gt; &lt; Set of 10 chromosomes &gt;
-#&gt; # Total size: 1,000 bp
+#&gt; &lt; Set of 4 chromosomes &gt;
+#&gt; # Total size: 961 bp
 #&gt;   name                             chromosome                             length
-#&gt; chrom0     TGTTCTCACGGAAAACGGGAAGTTTTTG...GTCACGTCAATGGAGTCTTGGGTCTCTA       100
-#&gt; chrom1     CCTCATGTTTCTAGTAGCTGCAACGCTC...TTGTGAACTCCCAGAGGCCTATGCTAAA       100
-#&gt; chrom2     AAATCGTCAAGGCTTCGACGTAGAGCCG...CATTGCAGTTCGGAACCGAGGACGGGCG       100
-#&gt; chrom3     TTCAGGCAGTGTGGTCTACTGGGCGCAG...TCAGAGCGATAAGATAGATCCGGATAAT       100
-#&gt; chrom4     AGGCTGACACCGCCGATGGCCGGGTCCA...GGGCGTCGGGCGAATGCTCGCATGCGAA       100
-#&gt; chrom5     CACTGAACGTTAGCAACTTCATCTACAT...GATTTCCTATCTGTGTGTTAGGACTATA       100
-#&gt; chrom6     GCGGTTAAGACCGAACCATCCGTGGGAC...AAAGTCTCTCGCAAGCCAGTCAGTGCCC       100
-#&gt; chrom7     CCGAATGCCAGTAAGCTCGAGCGTATAA...GTAAGCGTAACGCGCGTGCTGGTTTCGT       100
-#&gt; chrom8     TATAGCTAGACCGCCTCCGCGTACGACC...CGGCCGGGCTATCGGGCCTGGTAGGGGG       100
-#&gt; chrom9     TAAAGAGTGGGCGGGTCCGTAAAGTACC...CCACGAAGGCTCACGGTCACAATAGGTT       100</code></pre>
-<p>Now I can generate data for 1 flow cell of <span class="math inline">\(2 \times 250\)</span>bp sequencing on an Illumina MiSeq v3.</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="kw">illumina</span>(vars, <span class="dt">out_prefix =</span> <span class="st">&quot;phylo_tree&quot;</span>, <span class="dt">seq_sys =</span> <span class="st">&quot;MSv3&quot;</span>,</a>
-<a class="sourceLine" id="cb16-2" data-line-number="2">         <span class="dt">read_length =</span> <span class="dv">250</span>, <span class="dt">n_reads =</span> <span class="fl">50e6</span>)</a></code></pre></div>
+#&gt; 2          TCTCACGGAAAACGGGAAGTTTTTGGCC...CAAGGCTTCGACGTAGAGCCGGTGGATT       232
+#&gt; 3          GCTCCGGCAGCATCGGCTTCCGTGATCA...GGACTGCGGGGGTTCTAACGGGCGTCGG       245
+#&gt; 4          GAATGCTCGCATGCGAACACTGAACGTT...GAATGCCAGTAAGCTCGAGCGTATAAGG       247
+#&gt; X          CCCCATTTCAGCAACGAAGTCGATCGCA...GTTCAATCACGCGAAAAAAAACACGTCA       237</code></pre>
+<p>Now I can generate data for 1 flow cell of <span class="math inline">\(2 \times 250\)</span>bp sequencing on an Illumina MiSeq v3, where <code>haplotype_barcodes</code> is a character string that specifies the barcodes for each haplotype. I also wrote the true phylogenetic tree to a NEWICK file.</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1">haplotype_barcodes &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;CTAGCTTG&quot;</span>, <span class="st">&quot;TCGATCCA&quot;</span>, <span class="st">&quot;ATACCAAG&quot;</span>, <span class="st">&quot;GCGTTGGA&quot;</span>,</a>
+<a class="sourceLine" id="cb21-2" data-line-number="2">                        <span class="st">&quot;CTTCACGG&quot;</span>, <span class="st">&quot;TCCTGTAA&quot;</span>, <span class="st">&quot;CCTCGGTA&quot;</span>, <span class="st">&quot;TTCTAACG&quot;</span>, </a>
+<a class="sourceLine" id="cb21-3" data-line-number="3">                        <span class="st">&quot;CGCTCGTG&quot;</span>, <span class="st">&quot;TATCTACA&quot;</span>)</a>
+<a class="sourceLine" id="cb21-4" data-line-number="4"><span class="kw">illumina</span>(haps, <span class="dt">out_prefix =</span> <span class="st">&quot;phylo_tree&quot;</span>, <span class="dt">seq_sys =</span> <span class="st">&quot;MSv3&quot;</span>,</a>
+<a class="sourceLine" id="cb21-5" data-line-number="5">         <span class="dt">paired =</span> <span class="ot">TRUE</span>, <span class="dt">read_length =</span> <span class="dv">250</span>, <span class="dt">n_reads =</span> <span class="fl">50e6</span>,</a>
+<a class="sourceLine" id="cb21-6" data-line-number="6">         <span class="dt">barcodes =</span> haplotype_barcodes)</a>
+<a class="sourceLine" id="cb21-7" data-line-number="7">ape<span class="op">::</span><span class="kw">write.tree</span>(tree, <span class="st">&quot;true.tree&quot;</span>)</a></code></pre></div>
+<p>The true phylogenetic tree would then be compared to the final tree output from the program(s) the user chooses to test.</p>
 </div>
 <div id="from-gene-trees" class="section level3">
 <h3>From gene trees</h3>
-<p>Similar to the section above, the ultimate goal here is to test phylogeny reconstruction methods. The difference in this section is that instead of using a single, straightforward phylogeny, I use multiple gene trees per chromosome. In the species used in these simulations, species 3 diverged from 1 and 2 at <span class="math inline">\(t = 0.5\)</span>, where <span class="math inline">\(t\)</span> indicates time into the past and is in units of <span class="math inline">\(4 N_0\)</span> generations. Species 1 and 2 diverged at <span class="math inline">\(t = 0.25\)</span>. I assume a recombination rate of <span class="math inline">\(1 / (4 N_0)\)</span> recombination events per chromosome per generation. Because each chromosome is a different length and the length is required for including a recombination rate, I had to run <code>scrm</code> separately for each chromosome. There are 4 diploid individuals sampled per species.</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1"><span class="co"># Run scrm for one chromosome size:</span></a>
-<a class="sourceLine" id="cb17-2" data-line-number="2">one_chrom &lt;-<span class="st"> </span><span class="cf">function</span>(size) {</a>
-<a class="sourceLine" id="cb17-3" data-line-number="3">    sims &lt;-<span class="st"> </span><span class="kw">scrm</span>(</a>
-<a class="sourceLine" id="cb17-4" data-line-number="4">        <span class="kw">paste</span>(<span class="st">&quot;24 1&quot;</span>,</a>
-<a class="sourceLine" id="cb17-5" data-line-number="5">              <span class="co"># Output gene trees:</span></a>
-<a class="sourceLine" id="cb17-6" data-line-number="6">              <span class="st">&quot;-T&quot;</span>,</a>
-<a class="sourceLine" id="cb17-7" data-line-number="7">              <span class="co"># Recombination:</span></a>
-<a class="sourceLine" id="cb17-8" data-line-number="8">              <span class="st">&quot;-r 1&quot;</span>, size,</a>
-<a class="sourceLine" id="cb17-9" data-line-number="9">              <span class="co"># 3 species with no ongoing migration:</span></a>
-<a class="sourceLine" id="cb17-10" data-line-number="10">              <span class="st">&quot;-I 3&quot;</span>, <span class="kw">paste</span>(<span class="kw">rep</span>(<span class="st">&quot;8&quot;</span>, <span class="dv">3</span>), <span class="dt">collapse =</span> <span class="st">&quot; &quot;</span>), <span class="st">&quot;0&quot;</span>,</a>
-<a class="sourceLine" id="cb17-11" data-line-number="11">              <span class="co"># Species 2 derived from 1 at time 1.0:</span></a>
-<a class="sourceLine" id="cb17-12" data-line-number="12">              <span class="st">&quot;-ej 0.5 2 1&quot;</span>,  </a>
-<a class="sourceLine" id="cb17-13" data-line-number="13">              <span class="co"># Species 3 derived from 2 at time 0.5:</span></a>
-<a class="sourceLine" id="cb17-14" data-line-number="14">              <span class="st">&quot;-ej 0.25 3 2&quot;</span></a>
-<a class="sourceLine" id="cb17-15" data-line-number="15">        ))</a>
-<a class="sourceLine" id="cb17-16" data-line-number="16">    <span class="kw">return</span>(sims<span class="op">$</span>trees[[<span class="dv">1</span>]])</a>
-<a class="sourceLine" id="cb17-17" data-line-number="17">}</a>
-<a class="sourceLine" id="cb17-18" data-line-number="18"><span class="co"># For all chromosomes:</span></a>
-<a class="sourceLine" id="cb17-19" data-line-number="19">gtrees &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="dt">trees =</span> <span class="kw">lapply</span>(ref<span class="op">$</span><span class="kw">sizes</span>(), one_chrom))</a></code></pre></div>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1">vars &lt;-<span class="st"> </span><span class="kw">create_variants</span>(ref, <span class="kw">vars_gtrees</span>(gtrees),</a>
-<a class="sourceLine" id="cb18-2" data-line-number="2">                        sub, ins, del)</a></code></pre></div>
-<p>This results in the following <code>variants</code> object:</p>
-<pre><code>#&gt;                               &lt;&lt; Variants object &gt;&gt;
-#&gt; # Variants: 24
-#&gt; # Mutations: 433
+<p>Similar to the section above, the ultimate goal here is to test phylogeny reconstruction methods. The difference in this section is that instead of using a single, straightforward phylogeny, I use multiple gene trees per chromosome. In the species used in these simulations, species 1 diverged from 2 and 3 at <span class="math inline">\(t = 1.0\)</span>, where <span class="math inline">\(t\)</span> indicates time into the past and is in units of <span class="math inline">\(4 N_0\)</span> generations. Species 2 and 3 diverged at <span class="math inline">\(t = 0.5\)</span>. I assume a recombination rate of <span class="math inline">\(1 / (4 N_0)\)</span> recombination events per chromosome per generation. There are 4 diploid individuals sampled per species. I used the following code to call <code>scrm</code> to simulate the gene trees and create the object <code>gtrees</code>. And like the section using segregating sites, we have to wrap <code>lapply</code> inside <code>list(trees = ...)</code> to replicate the data structure from <code>scrm</code> for <code>jackalope</code> to use later.</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1"><span class="co"># Run scrm for one chromosome size:</span></a>
+<a class="sourceLine" id="cb22-2" data-line-number="2">one_chrom &lt;-<span class="st"> </span><span class="cf">function</span>(.size) {</a>
+<a class="sourceLine" id="cb22-3" data-line-number="3">    sims &lt;-<span class="st"> </span><span class="kw">scrm</span>(</a>
+<a class="sourceLine" id="cb22-4" data-line-number="4">        <span class="kw">paste</span>(<span class="st">&quot;24 1&quot;</span>,</a>
+<a class="sourceLine" id="cb22-5" data-line-number="5">              <span class="co"># Output gene trees:</span></a>
+<a class="sourceLine" id="cb22-6" data-line-number="6">              <span class="st">&quot;-T&quot;</span>,</a>
+<a class="sourceLine" id="cb22-7" data-line-number="7">              <span class="co"># Recombination:</span></a>
+<a class="sourceLine" id="cb22-8" data-line-number="8">              <span class="st">&quot;-r 1&quot;</span>, .size,</a>
+<a class="sourceLine" id="cb22-9" data-line-number="9">              <span class="co"># 3 species with no ongoing migration:</span></a>
+<a class="sourceLine" id="cb22-10" data-line-number="10">              <span class="st">&quot;-I 3 8 8 8 0&quot;</span>,</a>
+<a class="sourceLine" id="cb22-11" data-line-number="11">              <span class="co"># Species 2 derived from 1 at time 1.0:</span></a>
+<a class="sourceLine" id="cb22-12" data-line-number="12">              <span class="st">&quot;-ej 1.0 2 1&quot;</span>,  </a>
+<a class="sourceLine" id="cb22-13" data-line-number="13">              <span class="co"># Species 3 derived from 2 at time 0.5:</span></a>
+<a class="sourceLine" id="cb22-14" data-line-number="14">              <span class="st">&quot;-ej 0.5 3 2&quot;</span></a>
+<a class="sourceLine" id="cb22-15" data-line-number="15">        ))</a>
+<a class="sourceLine" id="cb22-16" data-line-number="16">    trees &lt;-<span class="st"> </span>sims<span class="op">$</span>trees[[<span class="dv">1</span>]]</a>
+<a class="sourceLine" id="cb22-17" data-line-number="17">    <span class="co"># scrm outputs branch lengths in units of 4*N0 generations, but we want just</span></a>
+<a class="sourceLine" id="cb22-18" data-line-number="18">    <span class="co"># generations:</span></a>
+<a class="sourceLine" id="cb22-19" data-line-number="19">    adjust_tree &lt;-<span class="st"> </span><span class="cf">function</span>(.p) {</a>
+<a class="sourceLine" id="cb22-20" data-line-number="20">        <span class="co"># Read to phylo object and adjust branch lengths:</span></a>
+<a class="sourceLine" id="cb22-21" data-line-number="21">        .tr &lt;-<span class="st"> </span><span class="kw">read.tree</span>(<span class="dt">text =</span> .p)</a>
+<a class="sourceLine" id="cb22-22" data-line-number="22">        .tr<span class="op">$</span>edge.length &lt;-<span class="st"> </span>.tr<span class="op">$</span>edge.length <span class="op">*</span><span class="st"> </span><span class="dv">4</span> <span class="op">*</span><span class="st"> </span>N0</a>
+<a class="sourceLine" id="cb22-23" data-line-number="23">        <span class="co"># &quot;prefix&quot; from `.p` showing how large the region this gene tree refers to is</span></a>
+<a class="sourceLine" id="cb22-24" data-line-number="24">        prefix &lt;-<span class="st"> </span><span class="kw">paste0</span>(<span class="kw">strsplit</span>(.p, <span class="st">&quot;</span><span class="ch">\\</span><span class="st">]&quot;</span>)[[<span class="dv">1</span>]][<span class="dv">1</span>], <span class="st">&quot;]&quot;</span>)</a>
+<a class="sourceLine" id="cb22-25" data-line-number="25">        <span class="co"># Put back together into NEWICK text</span></a>
+<a class="sourceLine" id="cb22-26" data-line-number="26">        <span class="kw">return</span>(<span class="kw">paste0</span>(prefix, <span class="kw">write.tree</span>(.tr)))</a>
+<a class="sourceLine" id="cb22-27" data-line-number="27">    }</a>
+<a class="sourceLine" id="cb22-28" data-line-number="28">    trees &lt;-<span class="st"> </span><span class="kw">sapply</span>(trees, adjust_tree)</a>
+<a class="sourceLine" id="cb22-29" data-line-number="29">    <span class="kw">names</span>(trees) &lt;-<span class="st"> </span><span class="ot">NULL</span></a>
+<a class="sourceLine" id="cb22-30" data-line-number="30">    <span class="kw">return</span>(trees)</a>
+<a class="sourceLine" id="cb22-31" data-line-number="31">}</a>
+<a class="sourceLine" id="cb22-32" data-line-number="32"><span class="co"># For all chromosomes:</span></a>
+<a class="sourceLine" id="cb22-33" data-line-number="33">gtrees &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="dt">trees =</span> <span class="kw">lapply</span>(ref<span class="op">$</span><span class="kw">sizes</span>(), one_chrom))</a></code></pre></div>
+<p>We can write the true gene trees using <code>write_gtrees</code> to an <code>ms</code>-style file:</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1"><span class="kw">write_gtrees</span>(<span class="kw">haps_gtrees</span>(gtrees), <span class="st">&quot;gtrees&quot;</span>)</a></code></pre></div>
+<p>The <code>create_haplotypes</code> function uses these gene trees to create variant haplotypes. As for the other haplotype-creation methods, function <code>haps_gtrees</code> checks and organizes information from the <code>gtrees</code> object.</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1">haps &lt;-<span class="st"> </span><span class="kw">create_haplotypes</span>(ref, <span class="kw">haps_gtrees</span>(gtrees),</a>
+<a class="sourceLine" id="cb24-2" data-line-number="2">                          sub, ins, del)</a></code></pre></div>
+<p>This results in the following <code>haplotypes</code> object:</p>
+<pre><code>#&gt;                               &lt;&lt; haplotypes object &gt;&gt;
+#&gt; # Haplotypes: 24
+#&gt; # Mutations: 2,782
 #&gt; 
 #&gt;                           &lt;&lt; Reference genome info: &gt;&gt;
-#&gt; &lt; Set of 10 chromosomes &gt;
-#&gt; # Total size: 1,000 bp
+#&gt; &lt; Set of 4 chromosomes &gt;
+#&gt; # Total size: 961 bp
 #&gt;   name                             chromosome                             length
-#&gt; chrom0     TGTTCTCACGGAAAACGGGAAGTTTTTG...GTCACGTCAATGGAGTCTTGGGTCTCTA       100
-#&gt; chrom1     CCTCATGTTTCTAGTAGCTGCAACGCTC...TTGTGAACTCCCAGAGGCCTATGCTAAA       100
-#&gt; chrom2     AAATCGTCAAGGCTTCGACGTAGAGCCG...CATTGCAGTTCGGAACCGAGGACGGGCG       100
-#&gt; chrom3     TTCAGGCAGTGTGGTCTACTGGGCGCAG...TCAGAGCGATAAGATAGATCCGGATAAT       100
-#&gt; chrom4     AGGCTGACACCGCCGATGGCCGGGTCCA...GGGCGTCGGGCGAATGCTCGCATGCGAA       100
-#&gt; chrom5     CACTGAACGTTAGCAACTTCATCTACAT...GATTTCCTATCTGTGTGTTAGGACTATA       100
-#&gt; chrom6     GCGGTTAAGACCGAACCATCCGTGGGAC...AAAGTCTCTCGCAAGCCAGTCAGTGCCC       100
-#&gt; chrom7     CCGAATGCCAGTAAGCTCGAGCGTATAA...GTAAGCGTAACGCGCGTGCTGGTTTCGT       100
-#&gt; chrom8     TATAGCTAGACCGCCTCCGCGTACGACC...CGGCCGGGCTATCGGGCCTGGTAGGGGG       100
-#&gt; chrom9     TAAAGAGTGGGCGGGTCCGTAAAGTACC...CCACGAAGGCTCACGGTCACAATAGGTT       100</code></pre>
-<p>To store mutation information by diploid sample, the <code>write_vcf</code> function writes the <code>variants</code> object to a VCF file. It assigns haplotypes to diploid samples using a matrix for the <code>sample_matrix</code> argument:</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1"><span class="kw">write_vcf</span>(vars, <span class="dt">out_prefix =</span> <span class="st">&quot;var_gtrees&quot;</span>,</a>
-<a class="sourceLine" id="cb20-2" data-line-number="2">          <span class="dt">sample_matrix =</span> <span class="kw">matrix</span>(<span class="dv">1</span><span class="op">:</span>vars<span class="op">$</span><span class="kw">n_vars</span>(), <span class="dt">ncol =</span> <span class="dv">2</span>, <span class="dt">byrow =</span> <span class="ot">TRUE</span>))</a></code></pre></div>
-<p>Now I can generate data for 1 flow cell of <span class="math inline">\(2 \times 250\)</span>bp sequencing on an Illumina MiSeq v3.</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1"><span class="kw">illumina</span>(ref, <span class="dt">out_prefix =</span> <span class="st">&quot;phylo_gtrees&quot;</span>,</a>
-<a class="sourceLine" id="cb21-2" data-line-number="2">         <span class="dt">seq_sys =</span> <span class="st">&quot;MSv3&quot;</span>,</a>
-<a class="sourceLine" id="cb21-3" data-line-number="3">         <span class="dt">paired =</span> <span class="ot">TRUE</span>,</a>
-<a class="sourceLine" id="cb21-4" data-line-number="4">         <span class="dt">read_length =</span> <span class="dv">250</span>,</a>
-<a class="sourceLine" id="cb21-5" data-line-number="5">         <span class="dt">n_reads =</span> <span class="fl">50e6</span>)</a></code></pre></div>
+#&gt; 2          TCTCACGGAAAACGGGAAGTTTTTGGCC...CAAGGCTTCGACGTAGAGCCGGTGGATT       232
+#&gt; 3          GCTCCGGCAGCATCGGCTTCCGTGATCA...GGACTGCGGGGGTTCTAACGGGCGTCGG       245
+#&gt; 4          GAATGCTCGCATGCGAACACTGAACGTT...GAATGCCAGTAAGCTCGAGCGTATAAGG       247
+#&gt; X          CCCCATTTCAGCAACGAAGTCGATCGCA...GTTCAATCACGCGAAAAAAAACACGTCA       237</code></pre>
+<p>To store mutation information by diploid sample, the <code>write_vcf</code> function writes the <code>haplotypes</code> object to a VCF file. It assigns every other haplotype to a new diploid sample using a matrix for the <code>sample_matrix</code> argument:</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1"><span class="kw">write_vcf</span>(haps, <span class="dt">out_prefix =</span> <span class="st">&quot;hap_gtrees&quot;</span>,</a>
+<a class="sourceLine" id="cb26-2" data-line-number="2">          <span class="dt">sample_matrix =</span> <span class="kw">matrix</span>(<span class="dv">1</span><span class="op">:</span>haps<span class="op">$</span><span class="kw">n_haps</span>(), <span class="dt">ncol =</span> <span class="dv">2</span>, <span class="dt">byrow =</span> <span class="ot">TRUE</span>))</a></code></pre></div>
+<p>Next I generated data for 1 flow cell of <span class="math inline">\(2 \times 250\)</span>bp sequencing on an Illumina MiSeq v3, with barcodes in the object <code>haplotype_barcodes</code>.</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1"><span class="co"># 2 of each barcode bc it's diploid</span></a>
+<a class="sourceLine" id="cb27-2" data-line-number="2">haplotype_barcodes &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="kw">c</span>(<span class="st">&quot;TCGCCTTA&quot;</span>, <span class="st">&quot;CTAGTACG&quot;</span>, <span class="st">&quot;TTCTGCCT&quot;</span>, <span class="st">&quot;GCTCAGGA&quot;</span>, <span class="st">&quot;AGGAGTCC&quot;</span>, </a>
+<a class="sourceLine" id="cb27-3" data-line-number="3">                            <span class="st">&quot;CATGCCTA&quot;</span>, <span class="st">&quot;GTAGAGAG&quot;</span>, <span class="st">&quot;CCTCTCTG&quot;</span>, <span class="st">&quot;AGCGTAGC&quot;</span>, <span class="st">&quot;CAGCCTCG&quot;</span>, </a>
+<a class="sourceLine" id="cb27-4" data-line-number="4">                            <span class="st">&quot;TGCCTCTT&quot;</span>, <span class="st">&quot;TCCTCTAC&quot;</span>), <span class="dt">each =</span> <span class="dv">2</span>)</a>
+<a class="sourceLine" id="cb27-5" data-line-number="5"><span class="kw">illumina</span>(haps, <span class="dt">out_prefix =</span> <span class="st">&quot;phylo_gtrees&quot;</span>, <span class="dt">seq_sys =</span> <span class="st">&quot;MSv3&quot;</span>,</a>
+<a class="sourceLine" id="cb27-6" data-line-number="6">         <span class="dt">read_length =</span> <span class="dv">250</span>, <span class="dt">n_reads =</span> <span class="fl">50e6</span>, <span class="dt">paired =</span> <span class="ot">TRUE</span>, </a>
+<a class="sourceLine" id="cb27-7" data-line-number="7">         <span class="dt">barcodes =</span> haplotype_barcodes)</a></code></pre></div>
+<p>Topologies of the gene trees would then be compared to final phylogenies output from software the user is interested in testing. Varying recombination rates or adding gene flow after separation of species would be natural extensions of these simulations.</p>
 </div>
 </div>
 

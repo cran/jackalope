@@ -40,11 +40,9 @@ using namespace Rcpp;
  */
 
 
-
-//' Incomplete Gamma function
-//'
-//' @noRd
-//'
+/*
+ Incomplete Gamma function
+ */
 inline double incG(const double& a, const double& z) {
     return R::pgamma(z, a, 1.0, 0, 0) * R::gammafn(a);
 }
@@ -52,13 +50,11 @@ inline double incG(const double& a, const double& z) {
 
 
 
-//' Mean of truncated Gamma distribution
-//'
-//' From http://dx.doi.org/10.12988/astp.2013.310125.
-//' As in that paper, b > 0 is the scale and c > 0 is the shape.
-//'
-//' @noRd
-//'
+/*
+ Mean of truncated Gamma distribution
+ From http://dx.doi.org/10.12988/astp.2013.310125.
+ As in that paper, b > 0 is the scale and c > 0 is the shape.
+*/
 double trunc_Gamma_mean(const double& b, const double& c,
                         const double& xl, const double& xu) {
 
@@ -81,11 +77,7 @@ double trunc_Gamma_mean(const double& b, const double& c,
     return z;
 }
 
-//' Create a vector of Gamma values for a discrete Gamma distribution.
-//'
-//'
-//' @noRd
-//'
+// Create a vector of Gamma values for a discrete Gamma distribution.
 void discrete_gamma(std::vector<double>& gammas,
                     const uint32& k,
                     const double& shape) {
@@ -117,11 +109,7 @@ void discrete_gamma(std::vector<double>& gammas,
 }
 
 
-//' Info to calculate P(t) for TN93 model and its special cases
-//'
-//'
-//' @noRd
-//'
+// Info to calculate P(t) for TN93 model and its special cases
 void Pt_info(std::vector<double> pi_tcag,
              const double& alpha_1,
              const double& alpha_2,
@@ -156,11 +144,7 @@ void Pt_info(std::vector<double> pi_tcag,
     return;
 }
 
-//' Info to calculate P(t) for GTR model
-//'
-//'
-//' @noRd
-//'
+// Info to calculate P(t) for GTR model
 void Pt_info(const arma::mat& Q,
              arma::mat& U,
              arma::mat& Ui,
@@ -227,35 +211,27 @@ void Pt_info(const arma::mat& Q,
 
 
 
+// Scale rate matrix so that total rate is `mu`
+void scale_Q(arma::mat& Q,
+             const std::vector<double>& pi_tcag,
+             const double& mu) {
+    if (mu > 0) {
+        arma::vec q(pi_tcag);
+        q %= Q.diag();
+        double mu_now = std::abs(arma::accu(q));
+        if (mu_now != 0) Q *= (mu / mu_now);
+    }
+    return;
+}
 
 
 
 
 
-//' @describeIn sub_models TN93 model.
-//'
-//' @param pi_tcag Vector of length 4 indicating the equilibrium distributions of
-//'     T, C, A, and G respectively. Values must be >= 0, and
-//'     they are forced to sum to 1.
-//' @param alpha_1 Substitution rate for T <-> C transition.
-//' @param alpha_2 Substitution rate for A <-> G transition.
-//' @param beta Substitution rate for transversions.
-//' @param gamma_shape Numeric shape parameter for discrete Gamma distribution used for
-//'     among-site variability. Values must be greater than zero.
-//'     If this parameter is `NA`, among-site variability is not included.
-//'     Defaults to `NA`.
-//' @param gamma_k The number of categories to split the discrete Gamma distribution
-//'     into. Values must be an integer in the range `[1,255]`.
-//'     This argument is ignored if `gamma_shape` is `NA`.
-//'     Defaults to `5`.
-//' @param invariant Proportion of sites that are invariant.
-//'     Values must be in the range `[0,1)`.
-//'     Defaults to `0`.
-//'
-//' @noRd
-//'
+
 //[[Rcpp::export]]
-List sub_TN93_cpp(std::vector<double> pi_tcag,
+List sub_TN93_cpp(const double& mu,
+                  std::vector<double> pi_tcag,
                   const double& alpha_1,
                   const double& alpha_2,
                   const double& beta,
@@ -279,6 +255,9 @@ List sub_TN93_cpp(std::vector<double> pi_tcag,
     arma::vec rowsums = arma::sum(Q, 1);
     rowsums *= -1;
     Q.diag() = rowsums;
+
+    // Scaling if desired:
+    scale_Q(Q, pi_tcag, mu);
 
     // Now getting vector of Gammas (which is the vector { 1 } if gamma_shape <= 0)
     std::vector<double> gammas;
@@ -311,17 +290,10 @@ List sub_TN93_cpp(std::vector<double> pi_tcag,
 
 
 
-//' @describeIn sub_models GTR model.
-//'
-//' @inheritParams sub_TN93
-//' @param abcdef A vector of length 6 that contains the off-diagonal elements
-//'     for the substitution rate matrix.
-//'     See `vignette("sub-models")` for how the values are ordered in the matrix.
-//'
-//' @noRd
-//'
+
 //[[Rcpp::export]]
-List sub_GTR_cpp(std::vector<double> pi_tcag,
+List sub_GTR_cpp(const double& mu,
+                 std::vector<double> pi_tcag,
                  const std::vector<double>& abcdef,
                  const double& gamma_shape,
                  const uint32& gamma_k,
@@ -348,6 +320,9 @@ List sub_GTR_cpp(std::vector<double> pi_tcag,
     arma::vec rowsums = arma::sum(Q, 1);
     rowsums *= -1;
     Q.diag() = rowsums;
+
+    // Scaling if desired:
+    scale_Q(Q, pi_tcag, mu);
 
     // Now getting vector of Gammas (which is the vector { 1 } if gamma_shape <= 0)
     std::vector<double> gammas;
@@ -379,20 +354,10 @@ List sub_GTR_cpp(std::vector<double> pi_tcag,
 
 
 
-//' @describeIn sub_models UNREST model.
-//'
-//'
-//' @param Q Matrix of substitution rates for "T", "C", "A", and "G", respectively.
-//'     Item `Q[i,j]` is the rate of substitution from nucleotide `i` to nucleotide `j`.
-//'     Do not include indel rates here!
-//'     Values on the diagonal are calculated inside the function so are ignored.
-//' @inheritParams sub_TN93
-//'
-//' @noRd
-//'
-//'
+
 //[[Rcpp::export]]
-List sub_UNREST_cpp(arma::mat Q,
+List sub_UNREST_cpp(const double& mu,
+                    arma::mat Q,
                     const double& gamma_shape,
                     const uint32& gamma_k,
                     const double& invariant) {
@@ -434,6 +399,9 @@ List sub_UNREST_cpp(arma::mat Q,
     double sumlv = arma::accu(left_vec);
 
     for (uint64 i = 0; i < 4; i++) pi_tcag[i] = left_vec(i) / sumlv;
+
+    // Scaling if desired:
+    scale_Q(Q, pi_tcag, mu);
 
     // Now getting vector of Gammas (which is the vector { 1 } if gamma_shape <= 0)
     std::vector<double> gammas;
