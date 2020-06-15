@@ -2,7 +2,7 @@ Package: jackalope
 Type: Package
 Title: A Swift, Versatile Phylogenomic and High-Throughput Sequencing
         Simulator
-Version: 1.1.0
+Version: 1.1.1
 Authors@R: person(c("Lucas", "A."), "Nell", email = "lucas@lucasnell.com", 
                     role = c("cph", "aut", "cre"),
                     comment = c(ORCID = "0000-0003-3209-0517"))
@@ -37,8 +37,8 @@ VignetteBuilder: knitr
 URL: https://github.com/lucasnell/jackalope
 BugReports: https://github.com/lucasnell/jackalope/issues
 NeedsCompilation: yes
-Packaged: 2020-02-28 18:15:22 UTC; lucasnell
+Packaged: 2020-06-15 14:17:43 UTC; lucasnell
 Author: Lucas A. Nell [cph, aut, cre] (<https://orcid.org/0000-0003-3209-0517>)
 Maintainer: Lucas A. Nell <lucas@lucasnell.com>
 Repository: CRAN
-Date/Publication: 2020-02-28 20:10:03 UTC
+Date/Publication: 2020-06-15 15:30:03 UTC
