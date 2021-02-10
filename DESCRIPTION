@@ -2,7 +2,7 @@ Package: jackalope
 Type: Package
 Title: A Swift, Versatile Phylogenomic and High-Throughput Sequencing
         Simulator
-Version: 1.1.1
+Version: 1.1.2
 Authors@R: person(c("Lucas", "A."), "Nell", email = "lucas@lucasnell.com", 
                     role = c("cph", "aut", "cre"),
                     comment = c(ORCID = "0000-0003-3209-0517"))
@@ -31,14 +31,14 @@ biocViews:
 Imports: ape, R6, Rcpp (>= 0.12.11), zlibbioc
 LinkingTo: Rcpp, RcppArmadillo, RcppProgress, Rhtslib, zlibbioc
 SystemRequirements: GNU make, C++11
-RoxygenNote: 7.0.2
-Suggests: coala, knitr, scrm, testthat
+RoxygenNote: 7.1.1
+Suggests: coala, knitr, rmarkdown, scrm, testthat
 VignetteBuilder: knitr
 URL: https://github.com/lucasnell/jackalope
 BugReports: https://github.com/lucasnell/jackalope/issues
 NeedsCompilation: yes
-Packaged: 2020-06-15 14:17:43 UTC; lucasnell
+Packaged: 2021-02-10 11:53:13 UTC; lucasnell
 Author: Lucas A. Nell [cph, aut, cre] (<https://orcid.org/0000-0003-3209-0517>)
 Maintainer: Lucas A. Nell <lucas@lucasnell.com>
 Repository: CRAN
-Date/Publication: 2020-06-15 15:30:03 UTC
+Date/Publication: 2021-02-10 12:30:03 UTC
