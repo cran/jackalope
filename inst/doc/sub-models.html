@@ -1,256 +1,432 @@
 <!DOCTYPE html>
-
 <html>
-
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
-<meta charset="utf-8" />
-<meta name="generator" content="pandoc" />
-<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+<title>Introduction</title>
 
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<script type="text/javascript">
+window.onload = function() {
+  var imgs = document.getElementsByTagName('img'), i, img;
+  for (i = 0; i < imgs.length; i++) {
+    img = imgs[i];
+    // center an image if it is the only element of its parent
+    if (img.parentElement.childElementCount === 1)
+      img.parentElement.style.textAlign = 'center';
+  }
+};
+</script>
 
 
 
-<title>Models of nucleotide substitution</title>
+<!-- MathJax scripts -->
+<script type="text/javascript" src="https://cdn.bootcss.com/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
 
-<script src="data:application/javascript;base64,Ly8gUGFuZG9jIDIuOSBhZGRzIGF0dHJpYnV0ZXMgb24gYm90aCBoZWFkZXIgYW5kIGRpdi4gV2UgcmVtb3ZlIHRoZSBmb3JtZXIgKHRvCi8vIGJlIGNvbXBhdGlibGUgd2l0aCB0aGUgYmVoYXZpb3Igb2YgUGFuZG9jIDwgMi44KS4KZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcignRE9NQ29udGVudExvYWRlZCcsIGZ1bmN0aW9uKGUpIHsKICB2YXIgaHMgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCJkaXYuc2VjdGlvbltjbGFzcyo9J2xldmVsJ10gPiA6Zmlyc3QtY2hpbGQiKTsKICB2YXIgaSwgaCwgYTsKICBmb3IgKGkgPSAwOyBpIDwgaHMubGVuZ3RoOyBpKyspIHsKICAgIGggPSBoc1tpXTsKICAgIGlmICghL15oWzEtNl0kL2kudGVzdChoLnRhZ05hbWUpKSBjb250aW51ZTsgIC8vIGl0IHNob3VsZCBiZSBhIGhlYWRlciBoMS1oNgogICAgYSA9IGguYXR0cmlidXRlczsKICAgIHdoaWxlIChhLmxlbmd0aCA+IDApIGgucmVtb3ZlQXR0cmlidXRlKGFbMF0ubmFtZSk7CiAgfQp9KTsK"></script>
 
 <style type="text/css">
-  code{white-space: pre-wrap;}
-  span.smallcaps{font-variant: small-caps;}
-  span.underline{text-decoration: underline;}
-  div.column{display: inline-block; vertical-align: top; width: 50%;}
-  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-  ul.task-list{list-style: none;}
-    </style>
+body, td {
+   font-family: sans-serif;
+   background-color: white;
+   font-size: 13px;
+}
 
+body {
+  max-width: 800px;
+  margin: auto;
+  padding: 1em;
+  line-height: 20px;
+}
 
+tt, code, pre {
+   font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
+}
 
+h1 {
+   font-size:2.2em;
+}
 
+h2 {
+   font-size:1.8em;
+}
 
+h3 {
+   font-size:1.4em;
+}
 
-<link rel="stylesheet" href="data:text/css,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" type="text/css" />
+h4 {
+   font-size:1.0em;
+}
 
+h5 {
+   font-size:0.9em;
+}
+
+h6 {
+   font-size:0.8em;
+}
+
+a:visited {
+   color: rgb(50%, 0%, 50%);
+}
+
+pre, img {
+  max-width: 100%;
+}
+pre {
+  overflow-x: auto;
+}
+pre code {
+   display: block; padding: 0.5em;
+}
+
+code {
+  font-size: 92%;
+  border: 1px solid #ccc;
+}
+
+code[class] {
+  background-color: #F8F8F8;
+}
+
+table, td, th {
+  border: none;
+}
+
+blockquote {
+   color:#666666;
+   margin:0;
+   padding-left: 1em;
+   border-left: 0.5em #EEE solid;
+}
+
+hr {
+   height: 0px;
+   border-bottom: none;
+   border-top-width: thin;
+   border-top-style: dotted;
+   border-top-color: #999999;
+}
+
+@media print {
+   * {
+      background: transparent !important;
+      color: black !important;
+      filter:none !important;
+      -ms-filter: none !important;
+   }
+
+   body {
+      font-size:12pt;
+      max-width:100%;
+   }
+
+   a, a:visited {
+      text-decoration: underline;
+   }
+
+   hr {
+      visibility: hidden;
+      page-break-before: always;
+   }
+
+   pre, blockquote {
+      padding-right: 1em;
+      page-break-inside: avoid;
+   }
+
+   tr, img {
+      page-break-inside: avoid;
+   }
+
+   img {
+      max-width: 100% !important;
+   }
+
+   @page :left {
+      margin: 15mm 20mm 15mm 10mm;
+   }
+
+   @page :right {
+      margin: 15mm 10mm 15mm 20mm;
+   }
+
+   p, h2, h3 {
+      orphans: 3; widows: 3;
+   }
+
+   h2, h3 {
+      page-break-after: avoid;
+   }
+}
+</style>
 
 
 
 </head>
 
 <body>
-
-
-
-
-<h1 class="title toc-ignore">Models of nucleotide substitution</h1>
-
-
-
-<div id="introduction" class="section level2">
 <h2>Introduction</h2>
-<p>This document outlines the models of substitution used in the package. The matrices below are substitution-rate matrices for each model. The rates within these matrices are ordered as follows:</p>
-<p><span class="math display">\[
+
+<p>This document outlines the models of substitution used in the package.
+The matrices below are substitution-rate matrices for each model.
+The rates within these matrices are ordered as follows:</p>
+
+<p>\[
 \begin{bmatrix}
-    \cdot           &amp; T\rightarrow C    &amp; T\rightarrow A    &amp; T\rightarrow G    \\
-    C\rightarrow T  &amp; \cdot             &amp; C\rightarrow A    &amp; C\rightarrow G    \\
-    A\rightarrow T  &amp; A\rightarrow C    &amp; \cdot             &amp; A\rightarrow G    \\
-    G\rightarrow T  &amp; G\rightarrow C    &amp; G\rightarrow A    &amp; \cdot
+    \cdot           & T\rightarrow C    & T\rightarrow A    & T\rightarrow G    \
+    C\rightarrow T  & \cdot             & C\rightarrow A    & C\rightarrow G    \
+    A\rightarrow T  & A\rightarrow C    & \cdot             & A\rightarrow G    \
+    G\rightarrow T  & G\rightarrow C    & G\rightarrow A    & \cdot
 \end{bmatrix}
-\]</span></p>
-<p>(For example, <span class="math inline">\(C \rightarrow T\)</span> indicates that the cell in that location refers to the rate from <span class="math inline">\(C\)</span> to <span class="math inline">\(T\)</span>.) Diagonals are determined based on all rows having to sum to zero (Yang 2006).</p>
+\]</p>
+
+<p>(For example, \(C \rightarrow T\) indicates that the cell in that location refers to
+the rate from \(C\) to \(T\).)
+Diagonals are determined based on all rows having to sum to zero (Yang 2006).</p>
+
 <p>Under each rate matrix are listed the parameters in the function required for that model.</p>
-<p>Below is a key of the parameters required in the functions for the models below, in order of their appearance:</p>
+
+<p>Below is a key of the parameters required in the functions for the models below,
+in order of their appearance:</p>
+
 <ul>
-<li><code>lambda</code>: <span class="math inline">\(\lambda\)</span></li>
-<li><code>alpha</code> <span class="math inline">\(\alpha\)</span></li>
-<li><code>beta</code> <span class="math inline">\(\beta\)</span></li>
-<li><code>pi_tcag</code> vector of <span class="math inline">\(\pi_T\)</span>, <span class="math inline">\(\pi_C\)</span>, <span class="math inline">\(\pi_A\)</span>, then <span class="math inline">\(\pi_G\)</span></li>
-<li><code>alpha_1</code> <span class="math inline">\(\alpha_1\)</span></li>
-<li><code>alpha_2</code> <span class="math inline">\(\alpha_2\)</span></li>
+<li><code>lambda</code>: \(\lambda\)</li>
+<li><code>alpha</code> \(\alpha\)</li>
+<li><code>beta</code> \(\beta\)</li>
+<li><code>pi_tcag</code> vector of \(\pi_T\), \(\pi_C\), \(\pi_A\), then \(\pi_G\)</li>
+<li><code>alpha_1</code> \(\alpha_1\)</li>
+<li><code>alpha_2</code> \(\alpha_2\)</li>
 <li><code>kappa</code> transition / transversion rate ratio</li>
-<li><code>abcdef</code> vector of <span class="math inline">\(a\)</span>, <span class="math inline">\(b\)</span>, <span class="math inline">\(c\)</span>, <span class="math inline">\(d\)</span>, <span class="math inline">\(e\)</span>, then <span class="math inline">\(f\)</span></li>
+<li><code>abcdef</code> vector of \(a\), \(b\), \(c\), \(d\), \(e\), then \(f\)</li>
 <li><code>Q</code>: matrix of all parameters, where diagonals are ignored</li>
 </ul>
-<p>Functions in <code>jackalope</code> that employ each model take the form <code>sub_X</code> for model <code>X</code> (e.g., <code>sub_JC69</code> for JC69 model).</p>
-<p><em>Note:</em> In all models, the matrices are scaled such that the overall mutation rate is <code>1</code>, but this behavior can be change using the <code>mu</code> parameter for each function.</p>
-</div>
-<div id="jc69" class="section level2">
+
+<p>Functions in <code>jackalope</code> that employ each model take the form <code>sub_X</code> for model <code>X</code>
+(e.g., <code>sub_JC69</code> for JC69 model).</p>
+
+<p><em>Note:</em> In all models, the matrices are scaled such that the overall mutation rate is <code>1</code>,
+but this behavior can be change using the <code>mu</code> parameter for each function.</p>
+
 <h2>JC69</h2>
-<p>The JC69 model (Jukes and Cantor 1969) uses a single rate, <span class="math inline">\(\lambda\)</span>.</p>
-<p><span class="math display">\[
+
+<p>The JC69 model (Jukes and Cantor 1969) uses a single rate, \(\lambda\).</p>
+
+<p>\[
 \mathbf{Q} = 
 \begin{bmatrix}
-\cdot   &amp; \lambda   &amp; \lambda   &amp; \lambda \\
-\lambda &amp; \cdot     &amp; \lambda   &amp; \lambda \\
-\lambda &amp; \lambda   &amp; \cdot     &amp; \lambda \\
-\lambda &amp; \lambda   &amp; \lambda   &amp; \cdot
+\cdot   & \lambda   & \lambda   & \lambda \
+\lambda & \cdot     & \lambda   & \lambda \
+\lambda & \lambda   & \cdot     & \lambda \
+\lambda & \lambda   & \lambda   & \cdot
 \end{bmatrix}
-\]</span></p>
+\]</p>
+
 <p><strong>Parameters:</strong></p>
+
 <ul>
 <li><code>lambda</code></li>
 </ul>
-</div>
-<div id="k80" class="section level2">
+
 <h2>K80</h2>
-<p>The K80 model (Kimura 1980) uses separate rates for transitions (<span class="math inline">\(\alpha\)</span>) and transversions (<span class="math inline">\(\beta\)</span>).</p>
-<p><span class="math display">\[
+
+<p>The K80 model (Kimura 1980) uses separate rates for transitions (\(\alpha\))
+and transversions (\(\beta\)).</p>
+
+<p>\[
 \mathbf{Q} = 
 \begin{bmatrix}
-\cdot   &amp; \alpha    &amp; \beta     &amp; \beta     \\
-\alpha  &amp; \cdot     &amp; \beta     &amp; \beta     \\
-\beta   &amp; \beta     &amp; \cdot     &amp; \alpha    \\
-\beta   &amp; \beta     &amp; \alpha    &amp; \cdot
+\cdot   & \alpha    & \beta     & \beta     \
+\alpha  & \cdot     & \beta     & \beta     \
+\beta   & \beta     & \cdot     & \alpha    \
+\beta   & \beta     & \alpha    & \cdot
 \end{bmatrix}
-\]</span></p>
+\]</p>
+
 <p><strong>Parameters:</strong></p>
+
 <ul>
 <li><code>alpha</code></li>
 <li><code>beta</code></li>
 </ul>
-</div>
-<div id="f81" class="section level2">
+
 <h2>F81</h2>
-<p>The F81 model (Felsenstein 1981) incorporates different equilibrium frequency distributions for each nucleotide (<span class="math inline">\(\pi_X\)</span> for nucleotide <span class="math inline">\(X\)</span>).</p>
-<p><span class="math display">\[
+
+<p>The F81 model (Felsenstein 1981) incorporates different equilibrium frequency
+distributions for each nucleotide (\(\pi_X\) for nucleotide \(X\)).</p>
+
+<p>\[
 \mathbf{Q} = 
 \begin{bmatrix}
-\cdot   &amp; \pi_C &amp; \pi_A &amp; \pi_G \\
-\pi_T   &amp; \cdot &amp; \pi_A &amp; \pi_G \\
-\pi_T   &amp; \pi_C &amp; \cdot &amp; \pi_G \\
-\pi_T   &amp; \pi_C &amp; \pi_A &amp; \cdot
+\cdot   & \pi_C & \pi_A & \pi_G \
+\pi_T   & \cdot & \pi_A & \pi_G \
+\pi_T   & \pi_C & \cdot & \pi_G \
+\pi_T   & \pi_C & \pi_A & \cdot
 \end{bmatrix}
-\]</span></p>
+\]</p>
+
 <p><strong>Parameters:</strong></p>
+
 <ul>
 <li><code>pi_tcag</code></li>
 </ul>
-</div>
-<div id="hky85" class="section level2">
+
 <h2>HKY85</h2>
-<p>The HKY85 model (Hasegawa et al. 1984, 1985) combines different equilibrium frequency distributions with unequal transition and transversion rates.</p>
-<p><span class="math display">\[
+
+<p>The HKY85 model (Hasegawa et al. 1984, 1985) combines different equilibrium frequency
+distributions with unequal transition and transversion rates.</p>
+
+<p>\[
 \mathbf{Q} = 
 \begin{bmatrix}
-\cdot           &amp; \alpha \pi_C  &amp; \beta \pi_A   &amp; \beta \pi_G   \\
-\alpha \pi_T    &amp; \cdot         &amp; \beta \pi_A   &amp; \beta \pi_G   \\
-\beta \pi_T     &amp; \beta \pi_C   &amp; \cdot         &amp; \alpha \pi_G  \\
-\beta \pi_T     &amp; \beta \pi_C   &amp; \alpha \pi_A  &amp; \cdot
+\cdot           & \alpha \pi_C  & \beta \pi_A   & \beta \pi_G   \
+\alpha \pi_T    & \cdot         & \beta \pi_A   & \beta \pi_G   \
+\beta \pi_T     & \beta \pi_C   & \cdot         & \alpha \pi_G  \
+\beta \pi_T     & \beta \pi_C   & \alpha \pi_A  & \cdot
 \end{bmatrix}
-\]</span></p>
+\]</p>
+
 <p><strong>Parameters:</strong></p>
+
 <ul>
 <li><code>alpha</code></li>
 <li><code>beta</code></li>
 <li><code>pi_tcag</code></li>
 </ul>
-</div>
-<div id="tn93" class="section level2">
+
 <h2>TN93</h2>
-<p>The TN93 model (Tamura and Nei 1993) adds to the HKY85 model by distinguishing between the two types of transitions: between pyrimidines (<span class="math inline">\(\alpha_1\)</span>) and between purines (<span class="math inline">\(\alpha_2\)</span>).</p>
-<p><span class="math display">\[
+
+<p>The TN93 model (Tamura and Nei 1993) adds to the HKY85 model by distinguishing
+between the two types of transitions:
+between pyrimidines (\(\alpha_1\)) and
+between purines (\(\alpha_2\)).</p>
+
+<p>\[
 \mathbf{Q} = 
 \begin{bmatrix}
-\cdot           &amp; \alpha_1 \pi_C    &amp; \beta \pi_A       &amp; \beta \pi_G \\
-\alpha_1 \pi_T  &amp; \cdot             &amp; \beta \pi_A       &amp; \beta \pi_G \\
-\beta \pi_T     &amp; \beta \pi_C       &amp; \cdot             &amp; \alpha_2 \pi_G \\
-\beta \pi_T     &amp; \beta \pi_C       &amp; \alpha_2 \pi_A    &amp; \cdot
+\cdot           & \alpha_1 \pi_C    & \beta \pi_A       & \beta \pi_G \
+\alpha_1 \pi_T  & \cdot             & \beta \pi_A       & \beta \pi_G \
+\beta \pi_T     & \beta \pi_C       & \cdot             & \alpha_2 \pi_G \
+\beta \pi_T     & \beta \pi_C       & \alpha_2 \pi_A    & \cdot
 \end{bmatrix}
-\]</span></p>
+\]</p>
+
 <p><strong>Parameters:</strong></p>
+
 <ul>
 <li><code>alpha_1</code></li>
 <li><code>alpha_2</code></li>
 <li><code>beta</code></li>
 <li><code>pi_tcag</code></li>
 </ul>
-</div>
-<div id="f84" class="section level2">
+
 <h2>F84</h2>
-<p>The F84 model (Kishino and Hasegawa 1989) is a special case of TN93, where <span class="math inline">\(\alpha_1 = (1 + \kappa/\pi_Y) \beta\)</span> and <span class="math inline">\(\alpha_2 = (1 + \kappa/\pi_R) \beta\)</span> (<span class="math inline">\(\pi_Y = \pi_T + \pi_C\)</span> and <span class="math inline">\(\pi_R = \pi_A + \pi_G\)</span>).</p>
-<p><span class="math display">\[
+
+<p>The F84 model (Kishino and Hasegawa 1989) is a special case of TN93, 
+where \(\alpha_1 = (1 + \kappa/\pi_Y) \beta\) and \(\alpha_2 = (1 + \kappa/\pi_R) \beta\)
+(\(\pi_Y = \pi_T + \pi_C\) and \(\pi_R = \pi_A + \pi_G\)).</p>
+
+<p>\[
 \mathbf{Q} = 
 \begin{bmatrix}
-\cdot                               &amp; (1 + \kappa/\pi_Y) \beta \pi_C    &amp;
-    \beta \pi_A                     &amp; \beta \pi_G                       \\
-(1 + \kappa/\pi_Y) \beta \pi_T      &amp; \cdot                             &amp;
-    \beta \pi_A                     &amp; \beta \pi_G                       \\
-\beta \pi_T                         &amp; \beta \pi_C                       &amp;
-    \cdot                           &amp; (1 + \kappa/\pi_R) \beta \pi_G    \\
-\beta \pi_T                         &amp; \beta \pi_C                       &amp;
-    (1 + \kappa/\pi_R) \beta \pi_A  &amp; \cdot
+\cdot                               & (1 + \kappa/\pi_Y) \beta \pi_C    &
+    \beta \pi_A                     & \beta \pi_G                       \
+(1 + \kappa/\pi_Y) \beta \pi_T      & \cdot                             &
+    \beta \pi_A                     & \beta \pi_G                       \
+\beta \pi_T                         & \beta \pi_C                       &
+    \cdot                           & (1 + \kappa/\pi_R) \beta \pi_G    \
+\beta \pi_T                         & \beta \pi_C                       &
+    (1 + \kappa/\pi_R) \beta \pi_A  & \cdot
 \end{bmatrix}
-\]</span></p>
+\]</p>
+
 <p><strong>Parameters:</strong></p>
+
 <ul>
 <li><code>beta</code></li>
 <li><code>kappa</code></li>
 <li><code>pi_tcag</code></li>
 </ul>
-</div>
-<div id="gtr" class="section level2">
+
 <h2>GTR</h2>
-<p>The GTR model (Tavaré 1986) is the least restrictive model that is still time-reversible (i.e., the rates <span class="math inline">\(r_{x \rightarrow y} = r_{y \rightarrow x}\)</span>).</p>
-<p><span class="math display">\[
+
+<p>The GTR model (Tavaré 1986) is the least restrictive model that is still time-reversible
+(i.e., the rates \(r_{x \rightarrow y} = r_{y \rightarrow x}\)).</p>
+
+<p>\[
 \mathbf{Q} = 
 \begin{bmatrix}
-\cdot   &amp; a \pi_C   &amp; b \pi_A   &amp; c \pi_G \\
-a \pi_T &amp; \cdot     &amp; d \pi_A   &amp; e \pi_G \\
-b \pi_T &amp; d \pi_C   &amp; \cdot     &amp; f \pi_G \\
-c \pi_T &amp; e \pi_C   &amp; f \pi_A   &amp; \cdot
+\cdot   & a \pi_C   & b \pi_A   & c \pi_G \
+a \pi_T & \cdot     & d \pi_A   & e \pi_G \
+b \pi_T & d \pi_C   & \cdot     & f \pi_G \
+c \pi_T & e \pi_C   & f \pi_A   & \cdot
 \end{bmatrix}
-\]</span></p>
+\]</p>
+
 <p><strong>Parameters:</strong></p>
+
 <ul>
 <li><code>pi_tcag</code></li>
 <li><code>abcdef</code></li>
 </ul>
-</div>
-<div id="unrest" class="section level2">
+
 <h2>UNREST</h2>
+
 <p>The UNREST model (Yang 1994) is entirely unrestrained.</p>
-<p><span class="math display">\[
+
+<p>\[
 \mathbf{Q} = 
 \begin{bmatrix}
-\cdot   &amp; q_{TC}    &amp; q_{TA}    &amp; q_{TG}  \\
-q_{CT}  &amp; \cdot     &amp; q_{CA}    &amp; q_{CG}  \\
-q_{AT}  &amp; q_{AC}    &amp; \cdot     &amp; q_{AG}  \\
-q_{GT}  &amp; q_{GC}    &amp; q_{GA}    &amp; \cdot
+\cdot   & q_{TC}    & q_{TA}    & q_{TG}  \
+q_{CT}  & \cdot     & q_{CA}    & q_{CG}  \
+q_{AT}  & q_{AC}    & \cdot     & q_{AG}  \
+q_{GT}  & q_{GC}    & q_{GA}    & \cdot
 \end{bmatrix}
-\]</span></p>
+\]</p>
+
 <p><strong>Parameters:</strong></p>
+
 <ul>
 <li><code>Q</code></li>
 </ul>
-</div>
-<div id="references" class="section level2">
+
 <h2>References</h2>
-<p>Felsenstein, J. 1981. Evolutionary trees from DNA sequences: A maximum likelihood approach. Journal of Molecular Evolution 17:368–376.</p>
-<p>Hasegawa, M., H. Kishino, and T. Yano. 1985. Dating of the human-ape splitting by a molecular clock of mitochondrial DNA. Journal of Molecular Evolution 22:160–174.</p>
-<p>Hasegawa, M., T. Yano, and H. Kishino. 1984. A new molecular clock of mitochondrial DNA and the evolution of hominoids. Proceedings of the Japan Academy, Series B 60:95–98.</p>
-<p>Jukes, T. H., and C. R. Cantor. 1969. Evolution of protein molecules. Pages 21–131 in H. N. Munro, editor. Mammalian protein metabolism. Academic Press, New York.</p>
-<p>Kimura, M. 1980. A simple method for estimating evolutionary rates of base substitutions through comparative studies of nucleotide sequences. Journal of Molecular Evolution 16:111–120.</p>
-<p>Kishino, H., and M. Hasegawa. 1989. Evaluation of the maximum likelihood estimate of the evolutionary tree topologies from DNA sequence data, and the branching order in hominoidea. Journal of Molecular Evolution 29:170-179.</p>
-<p>Tamura, K., and M. Nei. 1993. Estimation of the number of nucleotide substitutions in the control region of mitochondrial dna in humans and chimpanzees. Molecular Biology and Evolution 10:512–526.</p>
-<p>Tavaré, S. 1986. Some probabilistic and statistical problems in the analysis of DNA sequences. Lectures on Mathematics in the Life Sciences 17:57–86.</p>
-<p>Yang, Z. B. 1994. Estimating the pattern of nucleotide substitution. Journal of Molecular Evolution 39:105–111.</p>
-<p>Yang, Z. 2006. <em>Computational molecular evolution</em>. (P. H. Harvey and R. M. May, Eds.). Oxford University Press, New York, NY, USA.</p>
-</div>
 
+<p>Felsenstein, J. 1981. Evolutionary trees from DNA sequences: A maximum likelihood
+approach. Journal of Molecular Evolution 17:368–376.</p>
 
+<p>Hasegawa, M., H. Kishino, and T. Yano. 1985. Dating of the human-ape splitting by a
+molecular clock of mitochondrial DNA. Journal of Molecular Evolution 22:160–174.</p>
 
-<!-- code folding -->
+<p>Hasegawa, M., T. Yano, and H. Kishino. 1984. A new molecular clock of mitochondrial
+DNA and the evolution of hominoids. Proceedings of the Japan Academy, Series B
+60:95–98.</p>
 
+<p>Jukes, T. H., and C. R. Cantor. 1969. Evolution of protein molecules. Pages 21–131 in H.
+N. Munro, editor. Mammalian protein metabolism. Academic Press, New York.</p>
 
-<!-- dynamically load mathjax for compatibility with self-contained -->
-<script>
-  (function () {
-    var script = document.createElement("script");
-    script.type = "text/javascript";
-    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
-    document.getElementsByTagName("head")[0].appendChild(script);
-  })();
-</script>
+<p>Kimura, M. 1980. A simple method for estimating evolutionary rates of base substitutions
+through comparative studies of nucleotide sequences. Journal of Molecular Evolution
+16:111–120.</p>
+
+<p>Kishino, H., and M. Hasegawa. 1989.
+Evaluation of the maximum likelihood estimate of the evolutionary tree topologies from
+DNA sequence data, and the branching order in hominoidea.
+Journal of Molecular Evolution 29:170-179.</p>
+
+<p>Tamura, K., and M. Nei. 1993. Estimation of the number of nucleotide substitutions in the
+control region of mitochondrial dna in humans and chimpanzees. Molecular Biology and
+Evolution 10:512–526.</p>
+
+<p>Tavaré, S. 1986. Some probabilistic and statistical problems in the analysis of DNA
+sequences. Lectures on Mathematics in the Life Sciences 17:57–86.</p>
+
+<p>Yang, Z. B. 1994. Estimating the pattern of nucleotide substitution. Journal of
+Molecular Evolution 39:105–111.</p>
+
+<p>Yang, Z. 2006. <em>Computational molecular evolution</em>. (P. H. Harvey and R. M. May, Eds.).
+Oxford University Press, New York, NY, USA.</p>
 
 </body>
+
 </html>
