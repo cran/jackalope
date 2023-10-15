@@ -4,10 +4,9 @@
 [![Project Status: Active – The project has reached a stable, usable
 state and is being actively
 developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
-[![R build
-status](https://github.com/lucasnell/jackalope/workflows/R-CMD-check/badge.svg)](https://github.com/lucasnell/jackalope/actions)
-[![codecov](https://codecov.io/gh/lucasnell/jackalope/branch/master/graph/badge.svg)](https://codecov.io/gh/lucasnell/jackalope)
-[![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/jackalope)](https://cran.r-project.org/package=jackalope)
+[![R-CMD-check](https://github.com/lucasnell/jackalope/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/lucasnell/jackalope/actions/workflows/R-CMD-check.yaml)
+[![codecov](https://codecov.io/gh/lucasnell/jackalope/branch/master/graph/badge.svg)](https://app.codecov.io/gh/lucasnell/jackalope)
+[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/jackalope)](https://cran.r-project.org/package=jackalope)
 
 # jackalope <img src="man/figures/logo.png" align="right" alt="" width="120" />
 
@@ -90,7 +89,7 @@ install.packages("jackalope", type = "source")
 # remotes::install_github("lucasnell/jackalope")
 ```
 
-#### macOS, R version &gt;= 4.0.0
+#### macOS, R version \>= 4.0.0
 
 Follow the directions here to install R compiler tools:
 <https://thecoatlessprofessor.com/programming/cpp/r-compiler-tools-for-rcpp-on-macos/>.
@@ -130,7 +129,7 @@ withr::with_makevars(c(CPPFLAGS = "-Xclang -fopenmp", LDFLAGS = "-lomp"),
                      assignment = "+=")
 ```
 
-#### macOS, R version &gt;= 3.4\* and &lt; 4.0.0
+#### macOS, R version \>= 3.4\* and \< 4.0.0
 
 Add the following to the `.R/Makevars` file inside the home directory:
 

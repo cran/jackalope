@@ -1,370 +1,486 @@
 <!DOCTYPE html>
+
 <html>
+
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
-<title>Generating reference genome</title>
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
-<script type="text/javascript">
-window.onload = function() {
-  var imgs = document.getElementsByTagName('img'), i, img;
-  for (i = 0; i < imgs.length; i++) {
-    img = imgs[i];
-    // center an image if it is the only element of its parent
-    if (img.parentElement.childElementCount === 1)
-      img.parentElement.style.textAlign = 'center';
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Intro to jackalope</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
   }
-};
+});
 </script>
 
-<!-- Styles for R syntax highlighter -->
 <style type="text/css">
-   pre .operator,
-   pre .paren {
-     color: rgb(104, 118, 135)
-   }
-
-   pre .literal {
-     color: #990073
-   }
-
-   pre .number {
-     color: #099;
-   }
-
-   pre .comment {
-     color: #998;
-     font-style: italic
-   }
-
-   pre .keyword {
-     color: #900;
-     font-weight: bold
-   }
-
-   pre .identifier {
-     color: rgb(0, 0, 0);
-   }
-
-   pre .string {
-     color: #d14;
-   }
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
 </style>
 
-<!-- R syntax highlighter -->
-<script type="text/javascript">
-var hljs=new function(){function m(p){return p.replace(/&/gm,"&amp;").replace(/</gm,"&lt;")}function f(r,q,p){return RegExp(q,"m"+(r.cI?"i":"")+(p?"g":""))}function b(r){for(var p=0;p<r.childNodes.length;p++){var q=r.childNodes[p];if(q.nodeName=="CODE"){return q}if(!(q.nodeType==3&&q.nodeValue.match(/\s+/))){break}}}function h(t,s){var p="";for(var r=0;r<t.childNodes.length;r++){if(t.childNodes[r].nodeType==3){var q=t.childNodes[r].nodeValue;if(s){q=q.replace(/\n/g,"")}p+=q}else{if(t.childNodes[r].nodeName=="BR"){p+="\n"}else{p+=h(t.childNodes[r])}}}if(/MSIE [678]/.test(navigator.userAgent)){p=p.replace(/\r/g,"\n")}return p}function a(s){var r=s.className.split(/\s+/);r=r.concat(s.parentNode.className.split(/\s+/));for(var q=0;q<r.length;q++){var p=r[q].replace(/^language-/,"");if(e[p]){return p}}}function c(q){var p=[];(function(s,t){for(var r=0;r<s.childNodes.length;r++){if(s.childNodes[r].nodeType==3){t+=s.childNodes[r].nodeValue.length}else{if(s.childNodes[r].nodeName=="BR"){t+=1}else{if(s.childNodes[r].nodeType==1){p.push({event:"start",offset:t,node:s.childNodes[r]});t=arguments.callee(s.childNodes[r],t);p.push({event:"stop",offset:t,node:s.childNodes[r]})}}}}return t})(q,0);return p}function k(y,w,x){var q=0;var z="";var s=[];function u(){if(y.length&&w.length){if(y[0].offset!=w[0].offset){return(y[0].offset<w[0].offset)?y:w}else{return w[0].event=="start"?y:w}}else{return y.length?y:w}}function t(D){var A="<"+D.nodeName.toLowerCase();for(var B=0;B<D.attributes.length;B++){var C=D.attributes[B];A+=" "+C.nodeName.toLowerCase();if(C.value!==undefined&&C.value!==false&&C.value!==null){A+='="'+m(C.value)+'"'}}return A+">"}while(y.length||w.length){var v=u().splice(0,1)[0];z+=m(x.substr(q,v.offset-q));q=v.offset;if(v.event=="start"){z+=t(v.node);s.push(v.node)}else{if(v.event=="stop"){var p,r=s.length;do{r--;p=s[r];z+=("</"+p.nodeName.toLowerCase()+">")}while(p!=v.node);s.splice(r,1);while(r<s.length){z+=t(s[r]);r++}}}}return z+m(x.substr(q))}function j(){function q(x,y,v){if(x.compiled){return}var u;var s=[];if(x.k){x.lR=f(y,x.l||hljs.IR,true);for(var w in x.k){if(!x.k.hasOwnProperty(w)){continue}if(x.k[w] instanceof Object){u=x.k[w]}else{u=x.k;w="keyword"}for(var r in u){if(!u.hasOwnProperty(r)){continue}x.k[r]=[w,u[r]];s.push(r)}}}if(!v){if(x.bWK){x.b="\\b("+s.join("|")+")\\s"}x.bR=f(y,x.b?x.b:"\\B|\\b");if(!x.e&&!x.eW){x.e="\\B|\\b"}if(x.e){x.eR=f(y,x.e)}}if(x.i){x.iR=f(y,x.i)}if(x.r===undefined){x.r=1}if(!x.c){x.c=[]}x.compiled=true;for(var t=0;t<x.c.length;t++){if(x.c[t]=="self"){x.c[t]=x}q(x.c[t],y,false)}if(x.starts){q(x.starts,y,false)}}for(var p in e){if(!e.hasOwnProperty(p)){continue}q(e[p].dM,e[p],true)}}function d(B,C){if(!j.called){j();j.called=true}function q(r,M){for(var L=0;L<M.c.length;L++){if((M.c[L].bR.exec(r)||[null])[0]==r){return M.c[L]}}}function v(L,r){if(D[L].e&&D[L].eR.test(r)){return 1}if(D[L].eW){var M=v(L-1,r);return M?M+1:0}return 0}function w(r,L){return L.i&&L.iR.test(r)}function K(N,O){var M=[];for(var L=0;L<N.c.length;L++){M.push(N.c[L].b)}var r=D.length-1;do{if(D[r].e){M.push(D[r].e)}r--}while(D[r+1].eW);if(N.i){M.push(N.i)}return f(O,M.join("|"),true)}function p(M,L){var N=D[D.length-1];if(!N.t){N.t=K(N,E)}N.t.lastIndex=L;var r=N.t.exec(M);return r?[M.substr(L,r.index-L),r[0],false]:[M.substr(L),"",true]}function z(N,r){var L=E.cI?r[0].toLowerCase():r[0];var M=N.k[L];if(M&&M instanceof Array){return M}return false}function F(L,P){L=m(L);if(!P.k){return L}var r="";var O=0;P.lR.lastIndex=0;var M=P.lR.exec(L);while(M){r+=L.substr(O,M.index-O);var N=z(P,M);if(N){x+=N[1];r+='<span class="'+N[0]+'">'+M[0]+"</span>"}else{r+=M[0]}O=P.lR.lastIndex;M=P.lR.exec(L)}return r+L.substr(O,L.length-O)}function J(L,M){if(M.sL&&e[M.sL]){var r=d(M.sL,L);x+=r.keyword_count;return r.value}else{return F(L,M)}}function I(M,r){var L=M.cN?'<span class="'+M.cN+'">':"";if(M.rB){y+=L;M.buffer=""}else{if(M.eB){y+=m(r)+L;M.buffer=""}else{y+=L;M.buffer=r}}D.push(M);A+=M.r}function G(N,M,Q){var R=D[D.length-1];if(Q){y+=J(R.buffer+N,R);return false}var P=q(M,R);if(P){y+=J(R.buffer+N,R);I(P,M);return P.rB}var L=v(D.length-1,M);if(L){var O=R.cN?"</span>":"";if(R.rE){y+=J(R.buffer+N,R)+O}else{if(R.eE){y+=J(R.buffer+N,R)+O+m(M)}else{y+=J(R.buffer+N+M,R)+O}}while(L>1){O=D[D.length-2].cN?"</span>":"";y+=O;L--;D.length--}var r=D[D.length-1];D.length--;D[D.length-1].buffer="";if(r.starts){I(r.starts,"")}return R.rE}if(w(M,R)){throw"Illegal"}}var E=e[B];var D=[E.dM];var A=0;var x=0;var y="";try{var s,u=0;E.dM.buffer="";do{s=p(C,u);var t=G(s[0],s[1],s[2]);u+=s[0].length;if(!t){u+=s[1].length}}while(!s[2]);if(D.length>1){throw"Illegal"}return{r:A,keyword_count:x,value:y}}catch(H){if(H=="Illegal"){return{r:0,keyword_count:0,value:m(C)}}else{throw H}}}function g(t){var p={keyword_count:0,r:0,value:m(t)};var r=p;for(var q in e){if(!e.hasOwnProperty(q)){continue}var s=d(q,t);s.language=q;if(s.keyword_count+s.r>r.keyword_count+r.r){r=s}if(s.keyword_count+s.r>p.keyword_count+p.r){r=p;p=s}}if(r.language){p.second_best=r}return p}function i(r,q,p){if(q){r=r.replace(/^((<[^>]+>|\t)+)/gm,function(t,w,v,u){return w.replace(/\t/g,q)})}if(p){r=r.replace(/\n/g,"<br>")}return r}function n(t,w,r){var x=h(t,r);var v=a(t);var y,s;if(v){y=d(v,x)}else{return}var q=c(t);if(q.length){s=document.createElement("pre");s.innerHTML=y.value;y.value=k(q,c(s),x)}y.value=i(y.value,w,r);var u=t.className;if(!u.match("(\\s|^)(language-)?"+v+"(\\s|$)")){u=u?(u+" "+v):v}if(/MSIE [678]/.test(navigator.userAgent)&&t.tagName=="CODE"&&t.parentNode.tagName=="PRE"){s=t.parentNode;var p=document.createElement("div");p.innerHTML="<pre><code>"+y.value+"</code></pre>";t=p.firstChild.firstChild;p.firstChild.cN=s.cN;s.parentNode.replaceChild(p.firstChild,s)}else{t.innerHTML=y.value}t.className=u;t.result={language:v,kw:y.keyword_count,re:y.r};if(y.second_best){t.second_best={language:y.second_best.language,kw:y.second_best.keyword_count,re:y.second_best.r}}}function o(){if(o.called){return}o.called=true;var r=document.getElementsByTagName("pre");for(var p=0;p<r.length;p++){var q=b(r[p]);if(q){n(q,hljs.tabReplace)}}}function l(){if(window.addEventListener){window.addEventListener("DOMContentLoaded",o,false);window.addEventListener("load",o,false)}else{if(window.attachEvent){window.attachEvent("onload",o)}else{window.onload=o}}}var e={};this.LANGUAGES=e;this.highlight=d;this.highlightAuto=g;this.fixMarkup=i;this.highlightBlock=n;this.initHighlighting=o;this.initHighlightingOnLoad=l;this.IR="[a-zA-Z][a-zA-Z0-9_]*";this.UIR="[a-zA-Z_][a-zA-Z0-9_]*";this.NR="\\b\\d+(\\.\\d+)?";this.CNR="\\b(0[xX][a-fA-F0-9]+|(\\d+(\\.\\d*)?|\\.\\d+)([eE][-+]?\\d+)?)";this.BNR="\\b(0b[01]+)";this.RSR="!|!=|!==|%|%=|&|&&|&=|\\*|\\*=|\\+|\\+=|,|\\.|-|-=|/|/=|:|;|<|<<|<<=|<=|=|==|===|>|>=|>>|>>=|>>>|>>>=|\\?|\\[|\\{|\\(|\\^|\\^=|\\||\\|=|\\|\\||~";this.ER="(?![\\s\\S])";this.BE={b:"\\\\.",r:0};this.ASM={cN:"string",b:"'",e:"'",i:"\\n",c:[this.BE],r:0};this.QSM={cN:"string",b:'"',e:'"',i:"\\n",c:[this.BE],r:0};this.CLCM={cN:"comment",b:"//",e:"$"};this.CBLCLM={cN:"comment",b:"/\\*",e:"\\*/"};this.HCM={cN:"comment",b:"#",e:"$"};this.NM={cN:"number",b:this.NR,r:0};this.CNM={cN:"number",b:this.CNR,r:0};this.BNM={cN:"number",b:this.BNR,r:0};this.inherit=function(r,s){var p={};for(var q in r){p[q]=r[q]}if(s){for(var q in s){p[q]=s[q]}}return p}}();hljs.LANGUAGES.cpp=function(){var a={keyword:{"false":1,"int":1,"float":1,"while":1,"private":1,"char":1,"catch":1,"export":1,virtual:1,operator:2,sizeof:2,dynamic_cast:2,typedef:2,const_cast:2,"const":1,struct:1,"for":1,static_cast:2,union:1,namespace:1,unsigned:1,"long":1,"throw":1,"volatile":2,"static":1,"protected":1,bool:1,template:1,mutable:1,"if":1,"public":1,friend:2,"do":1,"return":1,"goto":1,auto:1,"void":2,"enum":1,"else":1,"break":1,"new":1,extern:1,using:1,"true":1,"class":1,asm:1,"case":1,typeid:1,"short":1,reinterpret_cast:2,"default":1,"double":1,register:1,explicit:1,signed:1,typename:1,"try":1,"this":1,"switch":1,"continue":1,wchar_t:1,inline:1,"delete":1,alignof:1,char16_t:1,char32_t:1,constexpr:1,decltype:1,noexcept:1,nullptr:1,static_assert:1,thread_local:1,restrict:1,_Bool:1,complex:1},built_in:{std:1,string:1,cin:1,cout:1,cerr:1,clog:1,stringstream:1,istringstream:1,ostringstream:1,auto_ptr:1,deque:1,list:1,queue:1,stack:1,vector:1,map:1,set:1,bitset:1,multiset:1,multimap:1,unordered_set:1,unordered_map:1,unordered_multiset:1,unordered_multimap:1,array:1,shared_ptr:1}};return{dM:{k:a,i:"</",c:[hljs.CLCM,hljs.CBLCLM,hljs.QSM,{cN:"string",b:"'\\\\?.",e:"'",i:"."},{cN:"number",b:"\\b(\\d+(\\.\\d*)?|\\.\\d+)(u|U|l|L|ul|UL|f|F)"},hljs.CNM,{cN:"preprocessor",b:"#",e:"$"},{cN:"stl_container",b:"\\b(deque|list|queue|stack|vector|map|set|bitset|multiset|multimap|unordered_map|unordered_set|unordered_multiset|unordered_multimap|array)\\s*<",e:">",k:a,r:10,c:["self"]}]}}}();hljs.LANGUAGES.r={dM:{c:[hljs.HCM,{cN:"number",b:"\\b0[xX][0-9a-fA-F]+[Li]?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+(?:[eE][+\\-]?\\d*)?L\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+\\.(?!\\d)(?:i\\b)?",e:hljs.IMMEDIATE_RE,r:1},{cN:"number",b:"\\b\\d+(?:\\.\\d*)?(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\.\\d+(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"keyword",b:"(?:tryCatch|library|setGeneric|setGroupGeneric)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\.",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\d+(?![\\w.])",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\b(?:function)",e:hljs.IMMEDIATE_RE,r:2},{cN:"keyword",b:"(?:if|in|break|next|repeat|else|for|return|switch|while|try|stop|warning|require|attach|detach|source|setMethod|setClass)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"literal",b:"(?:NA|NA_integer_|NA_real_|NA_character_|NA_complex_)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"literal",b:"(?:NULL|TRUE|FALSE|T|F|Inf|NaN)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"identifier",b:"[a-zA-Z.][a-zA-Z0-9._]*\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"<\\-(?!\\s*\\d)",e:hljs.IMMEDIATE_RE,r:2},{cN:"operator",b:"\\->|<\\-",e:hljs.IMMEDIATE_RE,r:1},{cN:"operator",b:"%%|~",e:hljs.IMMEDIATE_RE},{cN:"operator",b:">=|<=|==|!=|\\|\\||&&|=|\\+|\\-|\\*|/|\\^|>|<|!|&|\\||\\$|:",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"%",e:"%",i:"\\n",r:1},{cN:"identifier",b:"`",e:"`",r:0},{cN:"string",b:'"',e:'"',c:[hljs.BE],r:0},{cN:"string",b:"'",e:"'",c:[hljs.BE],r:0},{cN:"paren",b:"[[({\\])}]",e:hljs.IMMEDIATE_RE,r:0}]}};
-hljs.initHighlightingOnLoad();
-</script>
-
-<!-- MathJax scripts -->
-<script type="text/javascript" src="https://cdn.bootcss.com/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML">
-</script>
 
 
 <style type="text/css">
-body, td {
-   font-family: sans-serif;
-   background-color: white;
-   font-size: 13px;
+code {
+white-space: pre;
 }
-
-body {
-  max-width: 800px;
-  margin: auto;
-  padding: 1em;
-  line-height: 20px;
+.sourceCode {
+overflow: visible;
 }
-
-tt, code, pre {
-   font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
 }
-
-h1 {
-   font-size:2.2em;
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
-
-h2 {
-   font-size:1.8em;
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
 }
-
-h3 {
-   font-size:1.4em;
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
 
-h4 {
-   font-size:1.0em;
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
 }
-
-h5 {
-   font-size:0.9em;
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
 }
-
-h6 {
-   font-size:0.8em;
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
 }
-
-a:visited {
-   color: rgb(50%, 0%, 50%);
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
 }
-
-pre, img {
-  max-width: 100%;
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
 }
 pre {
-  overflow-x: auto;
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
 }
-pre code {
-   display: block; padding: 0.5em;
+pre:not([class]) {
+background-color: #f7f7f7;
 }
-
 code {
-  font-size: 92%;
-  border: 1px solid #ccc;
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
 }
-
-code[class] {
-  background-color: #F8F8F8;
+p > code, li > code {
+padding: 2px 0px;
 }
-
-table, td, th {
-  border: none;
+div.figure {
+text-align: center;
 }
-
-blockquote {
-   color:#666666;
-   margin:0;
-   padding-left: 1em;
-   border-left: 0.5em #EEE solid;
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
 }
-
-hr {
-   height: 0px;
-   border-bottom: none;
-   border-top-width: thin;
-   border-top-style: dotted;
-   border-top-color: #999999;
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
 }
-
-@media print {
-   * {
-      background: transparent !important;
-      color: black !important;
-      filter:none !important;
-      -ms-filter: none !important;
-   }
-
-   body {
-      font-size:12pt;
-      max-width:100%;
-   }
-
-   a, a:visited {
-      text-decoration: underline;
-   }
-
-   hr {
-      visibility: hidden;
-      page-break-before: always;
-   }
-
-   pre, blockquote {
-      padding-right: 1em;
-      page-break-inside: avoid;
-   }
-
-   tr, img {
-      page-break-inside: avoid;
-   }
-
-   img {
-      max-width: 100% !important;
-   }
-
-   @page :left {
-      margin: 15mm 20mm 15mm 10mm;
-   }
-
-   @page :right {
-      margin: 15mm 10mm 15mm 20mm;
-   }
-
-   p, h2, h3 {
-      orphans: 3; widows: 3;
-   }
-
-   h2, h3 {
-      page-break-after: avoid;
-   }
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
 }
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
 </style>
+
 
 
 
 </head>
 
 <body>
-<p>This document provides brief examples of how <code>jackalope</code> can be used
-to generate sequencing data that can inform some common sampling decisions for HTS
-studies.</p>
 
+
+
+
+<h1 class="title toc-ignore">Intro to jackalope</h1>
+
+
+
+<p>This document provides brief examples of how <code>jackalope</code>
+can be used to generate sequencing data that can inform some common
+sampling decisions for HTS studies.</p>
+<div id="generating-reference-genome" class="section level2">
 <h2>Generating reference genome</h2>
-
-<p>Here, I&#39;ll show how to generate a reference genome based on an existing assembly
-or via simulated DNA sequences.</p>
-
-<p>To show how an existing assembly is read in <code>jackalope</code>, the code below
-processes the assembly for <em>Drosophila melanogaster</em>
-(version 6.27) downloaded from <a href="https://flybase.org">https://flybase.org</a>.
-It reads the compressed FASTA file, filters out scaffolds by using a size threshold,
-removes the Y chromosome (to avoid having both an X and Y in the same haplotype), and 
-merges the left and right arms of chromosomes 2 and 3.
-It lastly sets the names of chromosomes 2 and 3 to be <code>&quot;2&quot;</code> and <code>&quot;3&quot;</code>, respectively.</p>
-
-<pre><code class="r">ref &lt;- read_fasta(&quot;dmel-6.27.fasta.gz&quot;, cut_names = TRUE)
-ref$filter_chroms(1e6, method = &quot;size&quot;)
-ref$rm_chroms(&quot;Y&quot;)
-ref$merge_chroms(c(&quot;2L&quot;, &quot;2R&quot;))
-ref$merge_chroms(c(&quot;3L&quot;, &quot;3R&quot;))
-names &lt;- ref$chrom_names()
-names[grepl(&quot;^2&quot;, names)] &lt;- &quot;2&quot;
-names[grepl(&quot;^3&quot;, names)] &lt;- &quot;3&quot;
-ref$set_names(names)
-</code></pre>
-
-<p>For the rest of the document, I will use a simulated genome for simplicity 
-(and so that I don&#39;t have to store the <em>D. melanogaster</em> genome inside this package).
-Here is how I simulated a genome of size \(\sim 1\) kb split among 4 chromosomes,
-with the same names as the chromosomes in the <em>D. melanogaster</em> genome:</p>
-
-<pre><code class="r">ref &lt;- create_genome(n_chroms = 4,
-                     len_mean = 1e3 / 4,
-                     len_sd = 10)
-ref$set_names(c(2:4, &quot;X&quot;))
-</code></pre>
-
+<p>Here, I’ll show how to generate a reference genome based on an
+existing assembly or via simulated DNA sequences.</p>
+<p>To show how an existing assembly is read in <code>jackalope</code>,
+the code below processes the assembly for <em>Drosophila
+melanogaster</em> (version 6.27) downloaded from
+<code>https://flybase.org</code>. It reads the compressed FASTA file,
+filters out scaffolds by using a size threshold, removes the Y
+chromosome (to avoid having both an X and Y in the same haplotype), and
+merges the left and right arms of chromosomes 2 and 3. It lastly sets
+the names of chromosomes 2 and 3 to be <code>&quot;2&quot;</code> and
+<code>&quot;3&quot;</code>, respectively.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>ref <span class="ot">&lt;-</span> <span class="fu">read_fasta</span>(<span class="st">&quot;dmel-6.27.fasta.gz&quot;</span>, <span class="at">cut_names =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>ref<span class="sc">$</span><span class="fu">filter_chroms</span>(<span class="fl">1e6</span>, <span class="at">method =</span> <span class="st">&quot;size&quot;</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>ref<span class="sc">$</span><span class="fu">rm_chroms</span>(<span class="st">&quot;Y&quot;</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>ref<span class="sc">$</span><span class="fu">merge_chroms</span>(<span class="fu">c</span>(<span class="st">&quot;2L&quot;</span>, <span class="st">&quot;2R&quot;</span>))</span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>ref<span class="sc">$</span><span class="fu">merge_chroms</span>(<span class="fu">c</span>(<span class="st">&quot;3L&quot;</span>, <span class="st">&quot;3R&quot;</span>))</span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>names <span class="ot">&lt;-</span> ref<span class="sc">$</span><span class="fu">chrom_names</span>()</span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>names[<span class="fu">grepl</span>(<span class="st">&quot;^2&quot;</span>, names)] <span class="ot">&lt;-</span> <span class="st">&quot;2&quot;</span></span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>names[<span class="fu">grepl</span>(<span class="st">&quot;^3&quot;</span>, names)] <span class="ot">&lt;-</span> <span class="st">&quot;3&quot;</span></span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a>ref<span class="sc">$</span><span class="fu">set_names</span>(names)</span></code></pre></div>
+<p>For the rest of the document, I will use a simulated genome for
+simplicity (and so that I don’t have to store the <em>D.
+melanogaster</em> genome inside this package). Here is how I simulated a
+genome of size <span class="math inline">\(\sim 1\)</span> kb split
+among 4 chromosomes, with the same names as the chromosomes in the
+<em>D. melanogaster</em> genome:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>ref <span class="ot">&lt;-</span> <span class="fu">create_genome</span>(<span class="at">n_chroms =</span> <span class="dv">4</span>,</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>                     <span class="at">len_mean =</span> <span class="fl">1e3</span> <span class="sc">/</span> <span class="dv">4</span>,</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>                     <span class="at">len_sd =</span> <span class="dv">10</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>ref<span class="sc">$</span><span class="fu">set_names</span>(<span class="fu">c</span>(<span class="dv">2</span><span class="sc">:</span><span class="dv">4</span>, <span class="st">&quot;X&quot;</span>))</span></code></pre></div>
 <p>This resulted in the following <code>ref_genome</code> object:</p>
-
 <pre><code>#&gt; &lt; Set of 4 chromosomes &gt;
 #&gt; # Total size: 961 bp
 #&gt;   name                             chromosome                             length
 #&gt; 2          TCTCACGGAAAACGGGAAGTTTTTGGCC...CAAGGCTTCGACGTAGAGCCGGTGGATT       232
 #&gt; 3          GCTCCGGCAGCATCGGCTTCCGTGATCA...GGACTGCGGGGGTTCTAACGGGCGTCGG       245
 #&gt; 4          GAATGCTCGCATGCGAACACTGAACGTT...GAATGCCAGTAAGCTCGAGCGTATAAGG       247
-#&gt; X          CCCCATTTCAGCAACGAAGTCGATCGCA...GTTCAATCACGCGAAAAAAAACACGTCA       237
-</code></pre>
-
-<p>For the examples below, we&#39;ll pretend this is our <em>D. melanogaster</em> genome.</p>
-
+#&gt; X          CCCCATTTCAGCAACGAAGTCGATCGCA...GTTCAATCACGCGAAAAAAAACACGTCA       237</code></pre>
+<p>For the examples below, we’ll pretend this is our <em>D.
+melanogaster</em> genome.</p>
+</div>
+<div id="molecular-evolution-information" class="section level2">
 <h2>Molecular evolution information</h2>
-
-<p>To generate variant haplotypes based on our reference genome, we need molecular
-evolution information (unless passing a Variant Call Format, or VCF, file).
-For molecular-evolution information, I used the JC69 model for simplicity.
-Mutation rates were chosen from the <code>evo_rates</code> object present inside <code>jackalope</code>, which
-stores Table 1 from <a href="https://dx.doi.org/10.1534/g3.116.030890">Sung et al. (2016)</a>.
-The substitution and indel rates were the values from <code>evo_rates</code> specific
-to <em>D. melanogaster</em>.
-The <code>mu</code> parameter to <code>sub_JC69</code> function was set to <code>NULL</code> because the default behavior
-of all substitution-model functions in <code>jackalope</code> is to scale rate matrices such
-that branch lengths are in units of substitutions per site.
-In this case, I don&#39;t want to scale rate matrices because our branch lengths will
-be in generations.
-<a href="https://doi.org/10.1093/nar/gkg745">Zhang and Gerstein (2003)</a> found a 1 to 2.90 ratio
-of insertions to deletions, and described relative rates of indels of various 
-sizes using a power-law relationship.
-To approximate the distributions they described, relative rates were derived from 
-a Lavalette distribution with \(L = 60\) and \(a = 1.60\) for insertions and
-\(a = 1.51\) for deletions.
-The \(\theta\) parameter is the population-scaled mutation rate, which we
-can get directly from <code>evo_rates</code> for <em>D. melanogaster</em>.
-Lastly, \(N_0\) is the effective population size for <em>D. melanogaster</em>, which is
-used in a few instances below because <code>scrm</code> outputs branch lengths in units of 
-\(4 N_0\) generations.</p>
-
-<pre><code class="r">sub_rate &lt;- evo_rates$subs[evo_rates$species == &quot;Drosophila melanogaster&quot;]
-indel_rate &lt;- evo_rates$indels[evo_rates$species == &quot;Drosophila melanogaster&quot;]
-# Because both are in units of 10^-10 events per site per generation:
-sub_rate &lt;- sub_rate * 1e-10
-indel_rate &lt;- indel_rate * 1e-10
-
-sub &lt;- sub_JC69(lambda = sub_rate, mu = NULL)
-ins &lt;- indels(rate = indel_rate, max_length = 60,a = 1.60)
-del &lt;- indels(rate = indel_rate, max_length = 60, a = 1.51)
-
-theta &lt;- evo_rates[evo_rates$species == &quot;Drosophila melanogaster&quot;,&quot;theta_s&quot;]
-
-# Originally in units of 1e6 individuals
-N0 &lt;- evo_rates[evo_rates$species == &quot;Drosophila melanogaster&quot;, &quot;Ne&quot;] * 1e6
-</code></pre>
-
-<p>When generating any haplotypes below, these objects will be used inside
-<code>create_haplotypes</code> to specify molecular evolution information.</p>
-
+<p>To generate variant haplotypes based on our reference genome, we need
+molecular evolution information (unless passing a Variant Call Format,
+or VCF, file). For molecular-evolution information, I used the JC69
+model for simplicity. Mutation rates were chosen from the
+<code>evo_rates</code> object present inside <code>jackalope</code>,
+which stores Table 1 from <a href="https://dx.doi.org/10.1534/g3.116.030890">Sung et al. (2016)</a>.
+The substitution and indel rates were the values from
+<code>evo_rates</code> specific to <em>D. melanogaster</em>. The
+<code>mu</code> parameter to <code>sub_JC69</code> function was set to
+<code>NULL</code> because the default behavior of all substitution-model
+functions in <code>jackalope</code> is to scale rate matrices such that
+branch lengths are in units of substitutions per site. In this case, I
+don’t want to scale rate matrices because our branch lengths will be in
+generations. <a href="https://doi.org/10.1093/nar/gkg745">Zhang and
+Gerstein (2003)</a> found a 1 to 2.90 ratio of insertions to deletions,
+and described relative rates of indels of various sizes using a
+power-law relationship. To approximate the distributions they described,
+relative rates were derived from a Lavalette distribution with <span class="math inline">\(L = 60\)</span> and <span class="math inline">\(a
+= 1.60\)</span> for insertions and <span class="math inline">\(a =
+1.51\)</span> for deletions. The <span class="math inline">\(\theta\)</span> parameter is the population-scaled
+mutation rate, which we can get directly from <code>evo_rates</code> for
+<em>D. melanogaster</em>. Lastly, <span class="math inline">\(N_0\)</span> is the effective population size for
+<em>D. melanogaster</em>, which is used in a few instances below because
+<code>scrm</code> outputs branch lengths in units of <span class="math inline">\(4 N_0\)</span> generations.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>sub_rate <span class="ot">&lt;-</span> evo_rates<span class="sc">$</span>subs[evo_rates<span class="sc">$</span>species <span class="sc">==</span> <span class="st">&quot;Drosophila melanogaster&quot;</span>]</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>indel_rate <span class="ot">&lt;-</span> evo_rates<span class="sc">$</span>indels[evo_rates<span class="sc">$</span>species <span class="sc">==</span> <span class="st">&quot;Drosophila melanogaster&quot;</span>]</span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="co"># Because both are in units of 10^-10 events per site per generation:</span></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>sub_rate <span class="ot">&lt;-</span> sub_rate <span class="sc">*</span> <span class="fl">1e-10</span></span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>indel_rate <span class="ot">&lt;-</span> indel_rate <span class="sc">*</span> <span class="fl">1e-10</span></span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>sub <span class="ot">&lt;-</span> <span class="fu">sub_JC69</span>(<span class="at">lambda =</span> sub_rate, <span class="at">mu =</span> <span class="cn">NULL</span>)</span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>ins <span class="ot">&lt;-</span> <span class="fu">indels</span>(<span class="at">rate =</span> indel_rate, <span class="at">max_length =</span> <span class="dv">60</span>,<span class="at">a =</span> <span class="fl">1.60</span>)</span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a>del <span class="ot">&lt;-</span> <span class="fu">indels</span>(<span class="at">rate =</span> indel_rate, <span class="at">max_length =</span> <span class="dv">60</span>, <span class="at">a =</span> <span class="fl">1.51</span>)</span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a>theta <span class="ot">&lt;-</span> evo_rates[evo_rates<span class="sc">$</span>species <span class="sc">==</span> <span class="st">&quot;Drosophila melanogaster&quot;</span>,<span class="st">&quot;theta_s&quot;</span>]</span>
+<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a></span>
+<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a><span class="co"># Originally in units of 1e6 individuals</span></span>
+<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a>N0 <span class="ot">&lt;-</span> evo_rates[evo_rates<span class="sc">$</span>species <span class="sc">==</span> <span class="st">&quot;Drosophila melanogaster&quot;</span>, <span class="st">&quot;Ne&quot;</span>] <span class="sc">*</span> <span class="fl">1e6</span></span></code></pre></div>
+<p>When generating any haplotypes below, these objects will be used
+inside <code>create_haplotypes</code> to specify molecular evolution
+information.</p>
+</div>
+<div id="assembling-a-genome" class="section level2">
 <h2>Assembling a genome</h2>
-
+<div id="based-on-a-reference" class="section level3">
 <h3>Based on a reference</h3>
-
-<p>The examples here produce FASTQ files from the known reference assembly that could
-test strategies for how to assemble a similar genome using HTS data.</p>
-
-<p>The first strategy is to use only PacBio sequencing.
-The PacBio Sequel system produces up to 500,000 reads per
-Single Molecule, Real-Time (SMRT) cell, so you could
-run the following for two cells (with the file <code>pacbio_R1.fq</code> as output):</p>
-
-<pre><code class="r">pacbio(ref, out_prefix = &quot;pacbio&quot;, n_reads = 2 * 500e3)
-</code></pre>
-
-<p>An alternative, hybrid strategy uses
-1 SMRT cell of PacBio sequencing and
-1 lane (\(\sim 500\) million reads) of $2 \times 100$bp Illumina
-sequencing on the HiSeq 2500 system (the default Illumina system in <code>jackalope</code>):</p>
-
-<pre><code class="r">pacbio(ref, out_prefix = &quot;pacbio&quot;, n_reads = 500e3)
-illumina(ref, out_prefix = &quot;illumina&quot;, n_reads = 500e6, paired = TRUE,
-         read_length = 100)
-</code></pre>
-
-<p>The last strategy combines 1 lane of $2 \times 100$bp Illumina HiSeq 2500 sequencing
-with 1 flow cell of $2 \times 250$bp mate-pair sequencing on an Illumina MiSeq v3.
-The mate-pair sequencing uses longer fragments (defaults are mean of 400 and
-standard deviation of 100) to better cover highly
-repetitive regions.</p>
-
-<pre><code class="r">illumina(ref, out_prefix = &quot;ill_pe&quot;, n_reads = 500e6, paired = TRUE,
-         read_length = 100)
-illumina(ref, out_prefix = &quot;ill_mp&quot;, seq_sys = &quot;MSv3&quot;,
-         read_length = 250, n_reads = 50e6, matepair = TRUE, 
-         frag_mean = 3000, frag_sd = 500)
-</code></pre>
-
-<p>These data could then be used to compare genome assembly performance between
-the strategies above, or between programs within a given strategy.
-Extensions of these tests include adjusting sequencing depth, sequencing platform,
-and error rates.</p>
-
+<p>The examples here produce FASTQ files from the known reference
+assembly that could test strategies for how to assemble a similar genome
+using HTS data.</p>
+<p>The first strategy is to use only PacBio sequencing. The PacBio
+Sequel system produces up to 500,000 reads per Single Molecule,
+Real-Time (SMRT) cell, so you could run the following for two cells
+(with the file <code>pacbio_R1.fq</code> as output):</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">pacbio</span>(ref, <span class="at">out_prefix =</span> <span class="st">&quot;pacbio&quot;</span>, <span class="at">n_reads =</span> <span class="dv">2</span> <span class="sc">*</span> <span class="fl">500e3</span>)</span></code></pre></div>
+<p>An alternative, hybrid strategy uses 1 SMRT cell of PacBio sequencing
+and 1 lane (<span class="math inline">\(\sim 500\)</span> million reads)
+of <span class="math inline">\(2 \times 100\)</span>bp Illumina
+sequencing on the HiSeq 2500 system (the default Illumina system in
+<code>jackalope</code>):</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">pacbio</span>(ref, <span class="at">out_prefix =</span> <span class="st">&quot;pacbio&quot;</span>, <span class="at">n_reads =</span> <span class="fl">500e3</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="fu">illumina</span>(ref, <span class="at">out_prefix =</span> <span class="st">&quot;illumina&quot;</span>, <span class="at">n_reads =</span> <span class="fl">500e6</span>, <span class="at">paired =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>         <span class="at">read_length =</span> <span class="dv">100</span>)</span></code></pre></div>
+<p>The last strategy combines 1 lane of <span class="math inline">\(2
+\times 100\)</span>bp Illumina HiSeq 2500 sequencing with 1 flow cell of
+<span class="math inline">\(2 \times 250\)</span>bp mate-pair sequencing
+on an Illumina MiSeq v3. The mate-pair sequencing uses longer fragments
+(defaults are mean of 400 and standard deviation of 100) to better cover
+highly repetitive regions.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">illumina</span>(ref, <span class="at">out_prefix =</span> <span class="st">&quot;ill_pe&quot;</span>, <span class="at">n_reads =</span> <span class="fl">500e6</span>, <span class="at">paired =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>         <span class="at">read_length =</span> <span class="dv">100</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="fu">illumina</span>(ref, <span class="at">out_prefix =</span> <span class="st">&quot;ill_mp&quot;</span>, <span class="at">seq_sys =</span> <span class="st">&quot;MSv3&quot;</span>,</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>         <span class="at">read_length =</span> <span class="dv">250</span>, <span class="at">n_reads =</span> <span class="fl">50e6</span>, <span class="at">matepair =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>         <span class="at">frag_mean =</span> <span class="dv">3000</span>, <span class="at">frag_sd =</span> <span class="dv">500</span>)</span></code></pre></div>
+<p>These data could then be used to compare genome assembly performance
+between the strategies above, or between programs within a given
+strategy. Extensions of these tests include adjusting sequencing depth,
+sequencing platform, and error rates.</p>
+</div>
+<div id="based-on-a-diploid-individual" class="section level3">
 <h3>Based on a diploid individual</h3>
-
-<p>For diploid species, scientists won&#39;t be sampling a haploid reference, and 
-heterozygosity can be a real problem for the assembly process.
-So below I&#39;ll show you how to simulate a diploid individual and create reads
-based on that.
-I&#39;ll just show the hybrid assembly strategy, but the others simply differ 
-in the sequencing step as shown above.</p>
-
-<p>First, we&#39;ll simulate two haplotypes based on the \(\theta\) (population-scaled mutation
-rate) and the other molecular evolution information for <em>D. melanogaster</em> we got 
-from the <code>evo_rates</code> object earlier.
-I&#39;m also renaming the haplotypes.</p>
-
-<pre><code class="r">haps &lt;- create_haplotypes(ref, haps_theta(theta = theta, n_haps = 2), 
-                          sub, ins, del)
-haps$set_names(c(&quot;A&quot;, &quot;B&quot;))
-</code></pre>
-
+<p>For diploid species, scientists won’t be sampling a haploid
+reference, and heterozygosity can be a real problem for the assembly
+process. So below I’ll show you how to simulate a diploid individual and
+create reads based on that. I’ll just show the hybrid assembly strategy,
+but the others simply differ in the sequencing step as shown above.</p>
+<p>First, we’ll simulate two haplotypes based on the <span class="math inline">\(\theta\)</span> (population-scaled mutation rate)
+and the other molecular evolution information for <em>D.
+melanogaster</em> we got from the <code>evo_rates</code> object earlier.
+I’m also renaming the haplotypes.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>haps <span class="ot">&lt;-</span> <span class="fu">create_haplotypes</span>(ref, <span class="fu">haps_theta</span>(<span class="at">theta =</span> theta, <span class="at">n_haps =</span> <span class="dv">2</span>), </span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>                          sub, ins, del)</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>haps<span class="sc">$</span><span class="fu">set_names</span>(<span class="fu">c</span>(<span class="st">&quot;A&quot;</span>, <span class="st">&quot;B&quot;</span>))</span></code></pre></div>
 <p>This results in the following <code>haplotypes</code> object:</p>
-
 <pre><code>#&gt;                               &lt;&lt; haplotypes object &gt;&gt;
 #&gt; # Haplotypes: 2
 #&gt; # Mutations: 21
@@ -376,71 +492,60 @@ haps$set_names(c(&quot;A&quot;, &quot;B&quot;))
 #&gt; 2          TCTCACGGAAAACGGGAAGTTTTTGGCC...CAAGGCTTCGACGTAGAGCCGGTGGATT       232
 #&gt; 3          GCTCCGGCAGCATCGGCTTCCGTGATCA...GGACTGCGGGGGTTCTAACGGGCGTCGG       245
 #&gt; 4          GAATGCTCGCATGCGAACACTGAACGTT...GAATGCCAGTAAGCTCGAGCGTATAAGG       247
-#&gt; X          CCCCATTTCAGCAACGAAGTCGATCGCA...GTTCAATCACGCGAAAAAAAACACGTCA       237
-</code></pre>
-
-<p>We generate 1 SMRT cell of PacBio sequencing and
-1 lane of $2 \times 100$bp Illumina sequencing on the HiSeq 2500 system as before,
-except using the new <code>haps</code> object instead of <code>ref</code>:</p>
-
-<pre><code class="r">pacbio(haps, out_prefix = &quot;pacbio&quot;, n_reads = 500e3)
-illumina(haps, out_prefix = &quot;illumina&quot;, n_reads = 500e6, paired = TRUE,
-         read_length = 100)
-</code></pre>
-
-<p>If we want to save the information for these haplotypes, we can output FASTA files 
-(one per haplotype) or a VCF file:</p>
-
-<pre><code class="r">write_fasta(haps, &quot;haps&quot;)
-write_vcf(haps, &quot;haps&quot;, sample_matrix = cbind(1, 2))
-</code></pre>
-
-<p>This would result in the following files being generated: 
-<code>haps__A.fa</code>, <code>haps__B.fa</code>, and <code>haps.vcf</code>.
-The <code>sample_matrix</code> argument to <code>write_vcf</code> states that the first two (i.e., all)
-haplotypes are from the first (and only) sample.
-These data could test different assembly strategies, similar to the above section,
-except that, for diploid organisms, it includes heterozygosity.
-Increasing the \(\theta\) parameter will result in more heterozygosity, which is an
-obvious extension of these tests.</p>
-
+#&gt; X          CCCCATTTCAGCAACGAAGTCGATCGCA...GTTCAATCACGCGAAAAAAAACACGTCA       237</code></pre>
+<p>We generate 1 SMRT cell of PacBio sequencing and 1 lane of <span class="math inline">\(2 \times 100\)</span>bp Illumina sequencing on the
+HiSeq 2500 system as before, except using the new <code>haps</code>
+object instead of <code>ref</code>:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="fu">pacbio</span>(haps, <span class="at">out_prefix =</span> <span class="st">&quot;pacbio&quot;</span>, <span class="at">n_reads =</span> <span class="fl">500e3</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a><span class="fu">illumina</span>(haps, <span class="at">out_prefix =</span> <span class="st">&quot;illumina&quot;</span>, <span class="at">n_reads =</span> <span class="fl">500e6</span>, <span class="at">paired =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>         <span class="at">read_length =</span> <span class="dv">100</span>)</span></code></pre></div>
+<p>If we want to save the information for these haplotypes, we can
+output FASTA files (one per haplotype) or a VCF file:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="fu">write_fasta</span>(haps, <span class="st">&quot;haps&quot;</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a><span class="fu">write_vcf</span>(haps, <span class="st">&quot;haps&quot;</span>, <span class="at">sample_matrix =</span> <span class="fu">cbind</span>(<span class="dv">1</span>, <span class="dv">2</span>))</span></code></pre></div>
+<p>This would result in the following files being generated:
+<code>haps__A.fa</code>, <code>haps__B.fa</code>, and
+<code>haps.vcf</code>. The <code>sample_matrix</code> argument to
+<code>write_vcf</code> states that the first two (i.e., all) haplotypes
+are from the first (and only) sample. These data could test different
+assembly strategies, similar to the above section, except that, for
+diploid organisms, it includes heterozygosity. Increasing the <span class="math inline">\(\theta\)</span> parameter will result in more
+heterozygosity, which is an obvious extension of these tests.</p>
+</div>
+</div>
+<div id="estimating-divergence-between-populations" class="section level2">
 <h2>Estimating divergence between populations</h2>
-
-<p>Here, I will demonstrate how to generate population-genomic data of a type that might
-be used to estimate the divergence between two populations.
-I first use the <code>scrm</code> package to conduct 
-coalescent simulations that will generate segregating sites for 10 variant haplotypes
-from the reference genome.
-Five of the haplotypes are from one population, five from another.
-The symmetrical migration rate is 100 individuals per generation.
-I used a recombination rate of 1 (the expected number of recombinations on the locus
-per \(4 N_0\) generations). I specify the recombination rate and chromosome size
-for <code>scrm</code> using the command <code>-r 1 C</code> for chromosome size <code>C</code>.
-I used the population-scaled mutation rate for <em>D. melanogaster</em>, scaled such 
-that the mutation rate (\(\mu\)) is in units of mutations per \(4 N_0\) generations,
-where \(N_0\) is the population size.
-For \(N_0\), I&#39;m using the effective population size for <em>D. melanogaster</em>,
-per <code>evo_rates</code>.
-The other code in the chunk below is to convert the output to look like that from
-the <code>scrm</code> R package, which can be easily processed by <code>jackalope</code>.</p>
-
-<pre><code class="r">library(scrm)
-# Function to run scrm for one chromosome and format output
-one_chrom &lt;- function(.size) {
-    ssites &lt;- scrm(sprintf(&quot;10 1 -t %.4f -r 1 %i -I 2 5 5 100&quot;, theta * 4 * N0, .size))
-    return(ssites$seg_sites[[1]])
-}
-ssites &lt;- list(seg_sites = lapply(ref$sizes(), one_chrom))
-</code></pre>
-
-<p>Using the previously created objects for molecular evolution information and
-the <code>haps_ssites</code> function, I create haplotypes from the reference genome:</p>
-
-<pre><code class="r">haps &lt;- create_haplotypes(ref, haps_ssites(ssites), sub, ins, del)
-</code></pre>
-
+<p>Here, I will demonstrate how to generate population-genomic data of a
+type that might be used to estimate the divergence between two
+populations. I first use the <code>scrm</code> package to conduct
+coalescent simulations that will generate segregating sites for 10
+variant haplotypes from the reference genome. Five of the haplotypes are
+from one population, five from another. The symmetrical migration rate
+is 100 individuals per generation. I used a recombination rate of 1 (the
+expected number of recombinations on the locus per <span class="math inline">\(4 N_0\)</span> generations). I specify the
+recombination rate and chromosome size for <code>scrm</code> using the
+command <code>-r 1 C</code> for chromosome size <code>C</code>. I used
+the population-scaled mutation rate for <em>D. melanogaster</em>, scaled
+such that the mutation rate (<span class="math inline">\(\mu\)</span>)
+is in units of mutations per <span class="math inline">\(4 N_0\)</span>
+generations, where <span class="math inline">\(N_0\)</span> is the
+population size. For <span class="math inline">\(N_0\)</span>, I’m using
+the effective population size for <em>D. melanogaster</em>, per
+<code>evo_rates</code>. The other code in the chunk below is to convert
+the output to look like that from the <code>scrm</code> R package, which
+can be easily processed by <code>jackalope</code>.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="fu">library</span>(scrm)</span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a><span class="co"># Function to run scrm for one chromosome and format output</span></span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a>one_chrom <span class="ot">&lt;-</span> <span class="cf">function</span>(.size) {</span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a>    ssites <span class="ot">&lt;-</span> <span class="fu">scrm</span>(<span class="fu">sprintf</span>(<span class="st">&quot;10 1 -t %.4f -r 1 %i -I 2 5 5 100&quot;</span>, theta <span class="sc">*</span> <span class="dv">4</span> <span class="sc">*</span> N0, .size))</span>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a>    <span class="fu">return</span>(ssites<span class="sc">$</span>seg_sites[[<span class="dv">1</span>]])</span>
+<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a>}</span>
+<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a>ssites <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">seg_sites =</span> <span class="fu">lapply</span>(ref<span class="sc">$</span><span class="fu">sizes</span>(), one_chrom))</span></code></pre></div>
+<p>Using the previously created objects for molecular evolution
+information and the <code>haps_ssites</code> function, I create
+haplotypes from the reference genome:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>haps <span class="ot">&lt;-</span> <span class="fu">create_haplotypes</span>(ref, <span class="fu">haps_ssites</span>(ssites), sub, ins, del)</span></code></pre></div>
 <p>This results in the following set of haplotypes:</p>
-
 <pre><code>#&gt;                               &lt;&lt; haplotypes object &gt;&gt;
 #&gt; # Haplotypes: 10
 #&gt; # Mutations: 2,553
@@ -452,60 +557,47 @@ the <code>haps_ssites</code> function, I create haplotypes from the reference ge
 #&gt; 2          TCTCACGGAAAACGGGAAGTTTTTGGCC...CAAGGCTTCGACGTAGAGCCGGTGGATT       232
 #&gt; 3          GCTCCGGCAGCATCGGCTTCCGTGATCA...GGACTGCGGGGGTTCTAACGGGCGTCGG       245
 #&gt; 4          GAATGCTCGCATGCGAACACTGAACGTT...GAATGCCAGTAAGCTCGAGCGTATAAGG       247
-#&gt; X          CCCCATTTCAGCAACGAAGTCGATCGCA...GTTCAATCACGCGAAAAAAAACACGTCA       237
-</code></pre>
-
-<p>For a file of true divergences from the reference genome, the <code>write_vcf</code> function
-writes the <code>haplotypes</code> object to a VCF file:</p>
-
-<pre><code class="r">write_vcf(haps, &quot;haplotypes&quot;)
-</code></pre>
-
-<p>Lastly, I simulate 1 lane of $2 \times 100$bp Illumina HiSeq 2500 sequencing.
-In this case, individuals within a population are pooled, and the population
-sequences are derived from are identified by barcodes.</p>
-
-<pre><code class="r">illumina(haps, out_prefix = &quot;haps_illumina&quot;, n_reads = 500e6, paired = TRUE,
-         read_length = 100, barcodes = c(rep(&quot;AACCGCGG&quot;, 5), 
-                                         rep(&quot;GGTTATAA&quot;, 5)))
-</code></pre>
-
-<p>The below example instead has each individual haplotype&#39;s reads output to separate
-FASTQ files:</p>
-
-<pre><code class="r">illumina(haps, out_prefix = &quot;haps_illumina&quot;, n_reads = 500e6, paired = TRUE,
-         read_length = 100, sep_files = TRUE)
-</code></pre>
-
-<p>The \(F_{ST}\) calculated from the resulting VCF file could then be compared to output
-from various programs to inform which works best in a particular case.
-For uncertain population parameters (e.g., migration rates), output from
-multiple calls to <code>scrm</code> varying the parameter of interest could be input to
-the <code>jackalope</code> pipeline above to identify the conditions under which one program
-might have an advantage over another.</p>
-
+#&gt; X          CCCCATTTCAGCAACGAAGTCGATCGCA...GTTCAATCACGCGAAAAAAAACACGTCA       237</code></pre>
+<p>For a file of true divergences from the reference genome, the
+<code>write_vcf</code> function writes the <code>haplotypes</code>
+object to a VCF file:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="fu">write_vcf</span>(haps, <span class="st">&quot;haplotypes&quot;</span>)</span></code></pre></div>
+<p>Lastly, I simulate 1 lane of <span class="math inline">\(2 \times
+100\)</span>bp Illumina HiSeq 2500 sequencing. In this case, individuals
+within a population are pooled, and the population sequences are derived
+from are identified by barcodes.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a><span class="fu">illumina</span>(haps, <span class="at">out_prefix =</span> <span class="st">&quot;haps_illumina&quot;</span>, <span class="at">n_reads =</span> <span class="fl">500e6</span>, <span class="at">paired =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a>         <span class="at">read_length =</span> <span class="dv">100</span>, <span class="at">barcodes =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="st">&quot;AACCGCGG&quot;</span>, <span class="dv">5</span>), </span>
+<span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a>                                         <span class="fu">rep</span>(<span class="st">&quot;GGTTATAA&quot;</span>, <span class="dv">5</span>)))</span></code></pre></div>
+<p>The below example instead has each individual haplotype’s reads
+output to separate FASTQ files:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a><span class="fu">illumina</span>(haps, <span class="at">out_prefix =</span> <span class="st">&quot;haps_illumina&quot;</span>, <span class="at">n_reads =</span> <span class="fl">500e6</span>, <span class="at">paired =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a>         <span class="at">read_length =</span> <span class="dv">100</span>, <span class="at">sep_files =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<p>The <span class="math inline">\(F_{ST}\)</span> calculated from the
+resulting VCF file could then be compared to output from various
+programs to inform which works best in a particular case. For uncertain
+population parameters (e.g., migration rates), output from multiple
+calls to <code>scrm</code> varying the parameter of interest could be
+input to the <code>jackalope</code> pipeline above to identify the
+conditions under which one program might have an advantage over
+another.</p>
+</div>
+<div id="constructing-a-phylogeny" class="section level2">
 <h2>Constructing a phylogeny</h2>
-
+<div id="from-one-phylogenetic-tree" class="section level3">
 <h3>From one phylogenetic tree</h3>
-
-<p>This section shows how <code>jackalope</code> can generate haplotypes from a phylogeny, then
-simulate sequencing data from those haplotypes to test phylogeny reconstruction methods.
-First, I simulated a random species tree of 10 species, then scaled it to have a 
-maximum tree depth of \(4 N_0\) generations:</p>
-
-<pre><code class="r">tree &lt;- rcoal(10)
-tree$edge.length &lt;- 4 * N0 * tree$edge.length / max(node.depth.edgelength(tree))
-</code></pre>
-
-<p>Function <code>haps_phylo</code> organizes and checks the <code>tree</code> object, and
-including it with the mutation-type information allowed me to create haplotypes based
-on this phylogeny:</p>
-
-<pre><code class="r">haps &lt;- create_haplotypes(ref, haps_phylo(tree), sub, ins, del)
-</code></pre>
-
+<p>This section shows how <code>jackalope</code> can generate haplotypes
+from a phylogeny, then simulate sequencing data from those haplotypes to
+test phylogeny reconstruction methods. First, I simulated a random
+species tree of 10 species, then scaled it to have a maximum tree depth
+of <span class="math inline">\(4 N_0\)</span> generations:</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a>tree <span class="ot">&lt;-</span> <span class="fu">rcoal</span>(<span class="dv">10</span>)</span>
+<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a>tree<span class="sc">$</span>edge.length <span class="ot">&lt;-</span> <span class="dv">4</span> <span class="sc">*</span> N0 <span class="sc">*</span> tree<span class="sc">$</span>edge.length <span class="sc">/</span> <span class="fu">max</span>(<span class="fu">node.depth.edgelength</span>(tree))</span></code></pre></div>
+<p>Function <code>haps_phylo</code> organizes and checks the
+<code>tree</code> object, and including it with the mutation-type
+information allowed me to create haplotypes based on this phylogeny:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a>haps <span class="ot">&lt;-</span> <span class="fu">create_haplotypes</span>(ref, <span class="fu">haps_phylo</span>(tree), sub, ins, del)</span></code></pre></div>
 <p>This results in the following <code>haplotypes</code> object:</p>
-
 <pre><code>#&gt;                               &lt;&lt; haplotypes object &gt;&gt;
 #&gt; # Haplotypes: 10
 #&gt; # Mutations: 547
@@ -517,94 +609,82 @@ on this phylogeny:</p>
 #&gt; 2          TCTCACGGAAAACGGGAAGTTTTTGGCC...CAAGGCTTCGACGTAGAGCCGGTGGATT       232
 #&gt; 3          GCTCCGGCAGCATCGGCTTCCGTGATCA...GGACTGCGGGGGTTCTAACGGGCGTCGG       245
 #&gt; 4          GAATGCTCGCATGCGAACACTGAACGTT...GAATGCCAGTAAGCTCGAGCGTATAAGG       247
-#&gt; X          CCCCATTTCAGCAACGAAGTCGATCGCA...GTTCAATCACGCGAAAAAAAACACGTCA       237
-</code></pre>
-
-<p>Now I can generate data for 1 flow cell of $2 \times 250$bp sequencing
-on an Illumina MiSeq v3, where <code>haplotype_barcodes</code> is a character string that specifies
-the barcodes for each haplotype.
-I also wrote the true phylogenetic tree to a NEWICK file.</p>
-
-<pre><code class="r">haplotype_barcodes &lt;- c(&quot;CTAGCTTG&quot;, &quot;TCGATCCA&quot;, &quot;ATACCAAG&quot;, &quot;GCGTTGGA&quot;,
-                        &quot;CTTCACGG&quot;, &quot;TCCTGTAA&quot;, &quot;CCTCGGTA&quot;, &quot;TTCTAACG&quot;, 
-                        &quot;CGCTCGTG&quot;, &quot;TATCTACA&quot;)
-illumina(haps, out_prefix = &quot;phylo_tree&quot;, seq_sys = &quot;MSv3&quot;,
-         paired = TRUE, read_length = 250, n_reads = 50e6,
-         barcodes = haplotype_barcodes)
-ape::write.tree(tree, &quot;true.tree&quot;)
-</code></pre>
-
-<p>The true phylogenetic tree would then be compared to the final tree output from
-the program(s) the user chooses to test.</p>
-
+#&gt; X          CCCCATTTCAGCAACGAAGTCGATCGCA...GTTCAATCACGCGAAAAAAAACACGTCA       237</code></pre>
+<p>Now I can generate data for 1 flow cell of <span class="math inline">\(2 \times 250\)</span>bp sequencing on an Illumina
+MiSeq v3, where <code>haplotype_barcodes</code> is a character string
+that specifies the barcodes for each haplotype. I also wrote the true
+phylogenetic tree to a NEWICK file.</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a>haplotype_barcodes <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;CTAGCTTG&quot;</span>, <span class="st">&quot;TCGATCCA&quot;</span>, <span class="st">&quot;ATACCAAG&quot;</span>, <span class="st">&quot;GCGTTGGA&quot;</span>,</span>
+<span id="cb21-2"><a href="#cb21-2" tabindex="-1"></a>                        <span class="st">&quot;CTTCACGG&quot;</span>, <span class="st">&quot;TCCTGTAA&quot;</span>, <span class="st">&quot;CCTCGGTA&quot;</span>, <span class="st">&quot;TTCTAACG&quot;</span>, </span>
+<span id="cb21-3"><a href="#cb21-3" tabindex="-1"></a>                        <span class="st">&quot;CGCTCGTG&quot;</span>, <span class="st">&quot;TATCTACA&quot;</span>)</span>
+<span id="cb21-4"><a href="#cb21-4" tabindex="-1"></a><span class="fu">illumina</span>(haps, <span class="at">out_prefix =</span> <span class="st">&quot;phylo_tree&quot;</span>, <span class="at">seq_sys =</span> <span class="st">&quot;MSv3&quot;</span>,</span>
+<span id="cb21-5"><a href="#cb21-5" tabindex="-1"></a>         <span class="at">paired =</span> <span class="cn">TRUE</span>, <span class="at">read_length =</span> <span class="dv">250</span>, <span class="at">n_reads =</span> <span class="fl">50e6</span>,</span>
+<span id="cb21-6"><a href="#cb21-6" tabindex="-1"></a>         <span class="at">barcodes =</span> haplotype_barcodes)</span>
+<span id="cb21-7"><a href="#cb21-7" tabindex="-1"></a>ape<span class="sc">::</span><span class="fu">write.tree</span>(tree, <span class="st">&quot;true.tree&quot;</span>)</span></code></pre></div>
+<p>The true phylogenetic tree would then be compared to the final tree
+output from the program(s) the user chooses to test.</p>
+</div>
+<div id="from-gene-trees" class="section level3">
 <h3>From gene trees</h3>
-
-<p>Similar to the section above, the ultimate goal here is to test phylogeny
-reconstruction methods.
-The difference in this section is that instead of using a single, straightforward
-phylogeny, I use multiple gene trees per chromosome.
-In the species used in these simulations, species 1 diverged from 2 and 3 at \(t = 1.0\),
-where \(t\) indicates time into the past and is in units of \(4 N_0\) generations.
-Species 2 and 3 diverged at \(t = 0.5\).
-I assume a recombination rate of \(1 / (4 N_0)\) recombination events per chromosome
-per generation.
-There are 4 diploid individuals sampled per species.
-I used the following code to call <code>scrm</code> to simulate the gene trees
-and create the object <code>gtrees</code>.
-And like the section using segregating sites, we have to wrap <code>lapply</code> inside 
-<code>list(trees = ...)</code> to replicate the data structure from <code>scrm</code> for
-<code>jackalope</code> to use later.</p>
-
-<pre><code class="r"># Run scrm for one chromosome size:
-one_chrom &lt;- function(.size) {
-    sims &lt;- scrm(
-        paste(&quot;24 1&quot;,
-              # Output gene trees:
-              &quot;-T&quot;,
-              # Recombination:
-              &quot;-r 1&quot;, .size,
-              # 3 species with no ongoing migration:
-              &quot;-I 3 8 8 8 0&quot;,
-              # Species 2 derived from 1 at time 1.0:
-              &quot;-ej 1.0 2 1&quot;,  
-              # Species 3 derived from 2 at time 0.5:
-              &quot;-ej 0.5 3 2&quot;
-        ))
-    trees &lt;- sims$trees[[1]]
-    # scrm outputs branch lengths in units of 4*N0 generations, but we want just
-    # generations:
-    adjust_tree &lt;- function(.p) {
-        # Read to phylo object and adjust branch lengths:
-        .tr &lt;- read.tree(text = .p)
-        .tr$edge.length &lt;- .tr$edge.length * 4 * N0
-        # &quot;prefix&quot; from `.p` showing how large the region this gene tree refers to is
-        prefix &lt;- paste0(strsplit(.p, &quot;\\]&quot;)[[1]][1], &quot;]&quot;)
-        # Put back together into NEWICK text
-        return(paste0(prefix, write.tree(.tr)))
-    }
-    trees &lt;- sapply(trees, adjust_tree)
-    names(trees) &lt;- NULL
-    return(trees)
-}
-# For all chromosomes:
-gtrees &lt;- list(trees = lapply(ref$sizes(), one_chrom))
-</code></pre>
-
-<p>We can write the true gene trees using <code>write_gtrees</code> to an <code>ms</code>-style file:</p>
-
-<pre><code class="r">write_gtrees(haps_gtrees(gtrees), &quot;gtrees&quot;)
-</code></pre>
-
-<p>The <code>create_haplotypes</code> function uses these gene trees to create variant haplotypes.
-As for the other haplotype-creation methods, function <code>haps_gtrees</code> checks and organizes
-information from the <code>gtrees</code> object.</p>
-
-<pre><code class="r">haps &lt;- create_haplotypes(ref, haps_gtrees(gtrees),
-                          sub, ins, del)
-</code></pre>
-
+<p>Similar to the section above, the ultimate goal here is to test
+phylogeny reconstruction methods. The difference in this section is that
+instead of using a single, straightforward phylogeny, I use multiple
+gene trees per chromosome. In the species used in these simulations,
+species 1 diverged from 2 and 3 at <span class="math inline">\(t =
+1.0\)</span>, where <span class="math inline">\(t\)</span> indicates
+time into the past and is in units of <span class="math inline">\(4
+N_0\)</span> generations. Species 2 and 3 diverged at <span class="math inline">\(t = 0.5\)</span>. I assume a recombination rate of
+<span class="math inline">\(1 / (4 N_0)\)</span> recombination events
+per chromosome per generation. There are 4 diploid individuals sampled
+per species. I used the following code to call <code>scrm</code> to
+simulate the gene trees and create the object <code>gtrees</code>. And
+like the section using segregating sites, we have to wrap
+<code>lapply</code> inside <code>list(trees = ...)</code> to replicate
+the data structure from <code>scrm</code> for <code>jackalope</code> to
+use later.</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a><span class="co"># Run scrm for one chromosome size:</span></span>
+<span id="cb22-2"><a href="#cb22-2" tabindex="-1"></a>one_chrom <span class="ot">&lt;-</span> <span class="cf">function</span>(.size) {</span>
+<span id="cb22-3"><a href="#cb22-3" tabindex="-1"></a>    sims <span class="ot">&lt;-</span> <span class="fu">scrm</span>(</span>
+<span id="cb22-4"><a href="#cb22-4" tabindex="-1"></a>        <span class="fu">paste</span>(<span class="st">&quot;24 1&quot;</span>,</span>
+<span id="cb22-5"><a href="#cb22-5" tabindex="-1"></a>              <span class="co"># Output gene trees:</span></span>
+<span id="cb22-6"><a href="#cb22-6" tabindex="-1"></a>              <span class="st">&quot;-T&quot;</span>,</span>
+<span id="cb22-7"><a href="#cb22-7" tabindex="-1"></a>              <span class="co"># Recombination:</span></span>
+<span id="cb22-8"><a href="#cb22-8" tabindex="-1"></a>              <span class="st">&quot;-r 1&quot;</span>, .size,</span>
+<span id="cb22-9"><a href="#cb22-9" tabindex="-1"></a>              <span class="co"># 3 species with no ongoing migration:</span></span>
+<span id="cb22-10"><a href="#cb22-10" tabindex="-1"></a>              <span class="st">&quot;-I 3 8 8 8 0&quot;</span>,</span>
+<span id="cb22-11"><a href="#cb22-11" tabindex="-1"></a>              <span class="co"># Species 2 derived from 1 at time 1.0:</span></span>
+<span id="cb22-12"><a href="#cb22-12" tabindex="-1"></a>              <span class="st">&quot;-ej 1.0 2 1&quot;</span>,  </span>
+<span id="cb22-13"><a href="#cb22-13" tabindex="-1"></a>              <span class="co"># Species 3 derived from 2 at time 0.5:</span></span>
+<span id="cb22-14"><a href="#cb22-14" tabindex="-1"></a>              <span class="st">&quot;-ej 0.5 3 2&quot;</span></span>
+<span id="cb22-15"><a href="#cb22-15" tabindex="-1"></a>        ))</span>
+<span id="cb22-16"><a href="#cb22-16" tabindex="-1"></a>    trees <span class="ot">&lt;-</span> sims<span class="sc">$</span>trees[[<span class="dv">1</span>]]</span>
+<span id="cb22-17"><a href="#cb22-17" tabindex="-1"></a>    <span class="co"># scrm outputs branch lengths in units of 4*N0 generations, but we want just</span></span>
+<span id="cb22-18"><a href="#cb22-18" tabindex="-1"></a>    <span class="co"># generations:</span></span>
+<span id="cb22-19"><a href="#cb22-19" tabindex="-1"></a>    adjust_tree <span class="ot">&lt;-</span> <span class="cf">function</span>(.p) {</span>
+<span id="cb22-20"><a href="#cb22-20" tabindex="-1"></a>        <span class="co"># Read to phylo object and adjust branch lengths:</span></span>
+<span id="cb22-21"><a href="#cb22-21" tabindex="-1"></a>        .tr <span class="ot">&lt;-</span> <span class="fu">read.tree</span>(<span class="at">text =</span> .p)</span>
+<span id="cb22-22"><a href="#cb22-22" tabindex="-1"></a>        .tr<span class="sc">$</span>edge.length <span class="ot">&lt;-</span> .tr<span class="sc">$</span>edge.length <span class="sc">*</span> <span class="dv">4</span> <span class="sc">*</span> N0</span>
+<span id="cb22-23"><a href="#cb22-23" tabindex="-1"></a>        <span class="co"># &quot;prefix&quot; from `.p` showing how large the region this gene tree refers to is</span></span>
+<span id="cb22-24"><a href="#cb22-24" tabindex="-1"></a>        prefix <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="fu">strsplit</span>(.p, <span class="st">&quot;</span><span class="sc">\\</span><span class="st">]&quot;</span>)[[<span class="dv">1</span>]][<span class="dv">1</span>], <span class="st">&quot;]&quot;</span>)</span>
+<span id="cb22-25"><a href="#cb22-25" tabindex="-1"></a>        <span class="co"># Put back together into NEWICK text</span></span>
+<span id="cb22-26"><a href="#cb22-26" tabindex="-1"></a>        <span class="fu">return</span>(<span class="fu">paste0</span>(prefix, <span class="fu">write.tree</span>(.tr)))</span>
+<span id="cb22-27"><a href="#cb22-27" tabindex="-1"></a>    }</span>
+<span id="cb22-28"><a href="#cb22-28" tabindex="-1"></a>    trees <span class="ot">&lt;-</span> <span class="fu">sapply</span>(trees, adjust_tree)</span>
+<span id="cb22-29"><a href="#cb22-29" tabindex="-1"></a>    <span class="fu">names</span>(trees) <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb22-30"><a href="#cb22-30" tabindex="-1"></a>    <span class="fu">return</span>(trees)</span>
+<span id="cb22-31"><a href="#cb22-31" tabindex="-1"></a>}</span>
+<span id="cb22-32"><a href="#cb22-32" tabindex="-1"></a><span class="co"># For all chromosomes:</span></span>
+<span id="cb22-33"><a href="#cb22-33" tabindex="-1"></a>gtrees <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">trees =</span> <span class="fu">lapply</span>(ref<span class="sc">$</span><span class="fu">sizes</span>(), one_chrom))</span></code></pre></div>
+<p>We can write the true gene trees using <code>write_gtrees</code> to
+an <code>ms</code>-style file:</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a><span class="fu">write_gtrees</span>(<span class="fu">haps_gtrees</span>(gtrees), <span class="st">&quot;gtrees&quot;</span>)</span></code></pre></div>
+<p>The <code>create_haplotypes</code> function uses these gene trees to
+create variant haplotypes. As for the other haplotype-creation methods,
+function <code>haps_gtrees</code> checks and organizes information from
+the <code>gtrees</code> object.</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" tabindex="-1"></a>haps <span class="ot">&lt;-</span> <span class="fu">create_haplotypes</span>(ref, <span class="fu">haps_gtrees</span>(gtrees),</span>
+<span id="cb24-2"><a href="#cb24-2" tabindex="-1"></a>                          sub, ins, del)</span></code></pre></div>
 <p>This results in the following <code>haplotypes</code> object:</p>
-
 <pre><code>#&gt;                               &lt;&lt; haplotypes object &gt;&gt;
 #&gt; # Haplotypes: 24
 #&gt; # Mutations: 2,782
@@ -616,35 +696,44 @@ information from the <code>gtrees</code> object.</p>
 #&gt; 2          TCTCACGGAAAACGGGAAGTTTTTGGCC...CAAGGCTTCGACGTAGAGCCGGTGGATT       232
 #&gt; 3          GCTCCGGCAGCATCGGCTTCCGTGATCA...GGACTGCGGGGGTTCTAACGGGCGTCGG       245
 #&gt; 4          GAATGCTCGCATGCGAACACTGAACGTT...GAATGCCAGTAAGCTCGAGCGTATAAGG       247
-#&gt; X          CCCCATTTCAGCAACGAAGTCGATCGCA...GTTCAATCACGCGAAAAAAAACACGTCA       237
-</code></pre>
+#&gt; X          CCCCATTTCAGCAACGAAGTCGATCGCA...GTTCAATCACGCGAAAAAAAACACGTCA       237</code></pre>
+<p>To store mutation information by diploid sample, the
+<code>write_vcf</code> function writes the <code>haplotypes</code>
+object to a VCF file. It assigns every other haplotype to a new diploid
+sample using a matrix for the <code>sample_matrix</code> argument:</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" tabindex="-1"></a><span class="fu">write_vcf</span>(haps, <span class="at">out_prefix =</span> <span class="st">&quot;hap_gtrees&quot;</span>,</span>
+<span id="cb26-2"><a href="#cb26-2" tabindex="-1"></a>          <span class="at">sample_matrix =</span> <span class="fu">matrix</span>(<span class="dv">1</span><span class="sc">:</span>haps<span class="sc">$</span><span class="fu">n_haps</span>(), <span class="at">ncol =</span> <span class="dv">2</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>))</span></code></pre></div>
+<p>Next I generated data for 1 flow cell of <span class="math inline">\(2 \times 250\)</span>bp sequencing on an Illumina
+MiSeq v3, with barcodes in the object
+<code>haplotype_barcodes</code>.</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" tabindex="-1"></a><span class="co"># 2 of each barcode bc it&#39;s diploid</span></span>
+<span id="cb27-2"><a href="#cb27-2" tabindex="-1"></a>haplotype_barcodes <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">&quot;TCGCCTTA&quot;</span>, <span class="st">&quot;CTAGTACG&quot;</span>, <span class="st">&quot;TTCTGCCT&quot;</span>, <span class="st">&quot;GCTCAGGA&quot;</span>, <span class="st">&quot;AGGAGTCC&quot;</span>, </span>
+<span id="cb27-3"><a href="#cb27-3" tabindex="-1"></a>                            <span class="st">&quot;CATGCCTA&quot;</span>, <span class="st">&quot;GTAGAGAG&quot;</span>, <span class="st">&quot;CCTCTCTG&quot;</span>, <span class="st">&quot;AGCGTAGC&quot;</span>, <span class="st">&quot;CAGCCTCG&quot;</span>, </span>
+<span id="cb27-4"><a href="#cb27-4" tabindex="-1"></a>                            <span class="st">&quot;TGCCTCTT&quot;</span>, <span class="st">&quot;TCCTCTAC&quot;</span>), <span class="at">each =</span> <span class="dv">2</span>)</span>
+<span id="cb27-5"><a href="#cb27-5" tabindex="-1"></a><span class="fu">illumina</span>(haps, <span class="at">out_prefix =</span> <span class="st">&quot;phylo_gtrees&quot;</span>, <span class="at">seq_sys =</span> <span class="st">&quot;MSv3&quot;</span>,</span>
+<span id="cb27-6"><a href="#cb27-6" tabindex="-1"></a>         <span class="at">read_length =</span> <span class="dv">250</span>, <span class="at">n_reads =</span> <span class="fl">50e6</span>, <span class="at">paired =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb27-7"><a href="#cb27-7" tabindex="-1"></a>         <span class="at">barcodes =</span> haplotype_barcodes)</span></code></pre></div>
+<p>Topologies of the gene trees would then be compared to final
+phylogenies output from software the user is interested in testing.
+Varying recombination rates or adding gene flow after separation of
+species would be natural extensions of these simulations.</p>
+</div>
+</div>
 
-<p>To store mutation information by diploid sample, the <code>write_vcf</code> function writes
-the <code>haplotypes</code> object to a VCF file.
-It assigns every other haplotype to a new diploid sample using a matrix for the
-<code>sample_matrix</code> argument:</p>
 
-<pre><code class="r">write_vcf(haps, out_prefix = &quot;hap_gtrees&quot;,
-          sample_matrix = matrix(1:haps$n_haps(), ncol = 2, byrow = TRUE))
-</code></pre>
 
-<p>Next I generated data for 1 flow cell of $2 \times 250$bp sequencing
-on an Illumina MiSeq v3, with barcodes in the object <code>haplotype_barcodes</code>.</p>
+<!-- code folding -->
 
-<pre><code class="r"># 2 of each barcode bc it&#39;s diploid
-haplotype_barcodes &lt;- rep(c(&quot;TCGCCTTA&quot;, &quot;CTAGTACG&quot;, &quot;TTCTGCCT&quot;, &quot;GCTCAGGA&quot;, &quot;AGGAGTCC&quot;, 
-                            &quot;CATGCCTA&quot;, &quot;GTAGAGAG&quot;, &quot;CCTCTCTG&quot;, &quot;AGCGTAGC&quot;, &quot;CAGCCTCG&quot;, 
-                            &quot;TGCCTCTT&quot;, &quot;TCCTCTAC&quot;), each = 2)
-illumina(haps, out_prefix = &quot;phylo_gtrees&quot;, seq_sys = &quot;MSv3&quot;,
-         read_length = 250, n_reads = 50e6, paired = TRUE, 
-         barcodes = haplotype_barcodes)
-</code></pre>
 
-<p>Topologies of the gene trees would then be compared to final phylogenies output
-from software the user is interested in testing.
-Varying recombination rates or adding gene flow after separation of species would
-be natural extensions of these simulations.</p>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
 
 </body>
-
 </html>
