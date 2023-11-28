@@ -1,4 +1,4 @@
-609c734337fcc013e7b540e6828fc64c *DESCRIPTION
+6184e102afac1e4331eef48adaaf4bbf *DESCRIPTION
 3fb6cb5ed6ff6e1b0c1afe58f8cd6db7 *LICENSE
 8fb6d11955bb1dab509ef16ac5d60db8 *NAMESPACE
 2fcf9c2172b8310dbf2b220bb0167211 *NEWS.md
@@ -13,7 +13,7 @@ fa1fc9de1ded31af6c03f939eac042da *R/hts_illumina.R
 746179b2b813e882cae01a5970c90407 *R/hts_pacbio.R
 7db14fd38c253e0136fc0ebd9e12d9d9 *R/jackalope-package.R
 fa295b393e18465118be56d558d89567 *R/mevo.R
-51ccf30c3520dcbfe32223304e27ec39 *R/read_write.R
+6867f495b7dab8d201fcfda6dee55bfc *R/read_write.R
 8c3c2d107231a0aded1cd65b0d9b1215 *R/util.R
 dbab8c7035c929ad1d55ee232020fcee *README.md
 7080893e02c49cd296d4424b9be55069 *build/partial.rdb
@@ -49,7 +49,7 @@ de1f2d814d8c622be6a4c89aa4c0ea85 *inst/art_profiles/NextSeq500v2L75R1.txt.gz
 443281230cb8b598f3711e04d1116ac3 *inst/art_profiles/NextSeq500v2L75R2.txt.gz
 0556d946902fad998efca27732cc4ebd *inst/doc/jackalope-intro.R
 5a99c0ca99183b1af81998ac6d30846b *inst/doc/jackalope-intro.Rmd
-652c61c4be983b215fd9a3fb550cec87 *inst/doc/jackalope-intro.html
+5678bf95e387a0023ac7e76787f32f15 *inst/doc/jackalope-intro.html
 858fb5065cfb9c6896feea77eaae58d9 *inst/doc/sub-models.R
 447e6355351d1c0fdcc59b40356b869a *inst/doc/sub-models.Rmd
 384fd4a5d84373a72733ab0eb919fe28 *inst/doc/sub-models.html
@@ -93,7 +93,7 @@ a1f75512361ec03416926a3a27b2e576 *src/hts_illumina.cpp
 dfb2bf1c75bf3574629c4dd48510060a *src/io.h
 bdb0c9b36dc6c620fdddff5ff4f4e804 *src/io_fasta.cpp
 1bed478767a1d7e4339162ad9215bab2 *src/io_ms.cpp
-4186dbc45224c2c670f14f3cf2447ae6 *src/io_vcf.cpp
+73b1810ab7a77b3efde5456cc2abdec1 *src/io_vcf.cpp
 d80c0e674fc35dfd6223045f5a44601b *src/io_vcf.h
 8af5036bb551622517d23156d6211499 *src/jackalope_config.h
 64b40465b4b04ce6f4d69dd626b0b063 *src/jackalope_types.h
@@ -107,11 +107,11 @@ dc1609f14a533110b540578036a3b265 *src/mutator_type.h
 4b66895707ae12293f3ffc52fe1d5f65 *src/pcg.h
 673daa99cef037bb63a4428cdb31e806 *src/phylogenomics.cpp
 238be1d340c01b18dad700ed6421c02a *src/phylogenomics.h
-ca91a2a2b3d462afb20ff5804a69f909 *src/ref_classes.h
+db4d7fed5df4215a56e7fb3b4178b8d5 *src/ref_classes.h
 6e0fdb32a2902f16b1a03f036c637dd9 *src/ref_hap_access.cpp
 07c35e6a53350a5f6c45ce20a457fb51 *src/str_manip.h
 f7013a98f44d2960b5e18022efc085e9 *src/sub_models.cpp
-cd6e9a0608e51c36510d971d7189982a *src/util.cpp
+c14dcf78fae19b87893c7a1a0777cd24 *src/util.cpp
 f6bb6836f175f6d488a01db7175e20c7 *src/util.h
 0969a755078166e21e9e226d5162455d *tests/testthat.R
 0a7a240a40f3e59d84ae1c39647d4182 *tests/testthat/files/ms_out.txt
@@ -123,8 +123,8 @@ e5a1ad5df6a8c149a6498dc5be096939 *tests/testthat/test-create_mevo.R
 badd85a451f4d26ec269c0b505573219 *tests/testthat/test-fasta_IO.R
 bb4e5bfc245e9f7281ab027304844c53 *tests/testthat/test-misc.R
 8c185739e4c2cc03b0ed3aae8cea66c9 *tests/testthat/test-sequencer.R
-e23a275f7a69dac2c2f8333d53184845 *tests/testthat/test-variants_coal.R
+c2c822772a25dacee1088692a2c6dae1 *tests/testthat/test-variants_coal.R
 75fc034bc9ef5ce12e30192447cb1552 *tests/testthat/test-variants_other.R
-9ef53b44292de1f0b551001af0d925a2 *tests/testthat/test-vcf_IO.R
+2f9fb0f2c0b229bffde78ba5e54ff886 *tests/testthat/test-vcf_IO.R
 5a99c0ca99183b1af81998ac6d30846b *vignettes/jackalope-intro.Rmd
 447e6355351d1c0fdcc59b40356b869a *vignettes/sub-models.Rmd
