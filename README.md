@@ -37,16 +37,15 @@ outputs can be written to standard file formats.
 
 ### Dependencies
 
-Before installing `jackalope`, you should update the packages `Rhtslib`
-and `zlibbioc`. Since both of these are on Bioconductor, you should
-update `BiocManager`, too.
+Before installing `jackalope`, you should update the package `Rhtslib`.
+Since this is on Bioconductor, you should update `BiocManager`, too.
 
 ``` r
 if (!requireNamespace("BiocManager", quietly = TRUE) ||
     "BiocManager" %in% row.names(old.packages())) {
   install.packages("BiocManager")
 }
-BiocManager::install(c("Rhtslib", "zlibbioc"))
+BiocManager::install("Rhtslib")
 ```
 
 ### Stable version
@@ -92,7 +91,7 @@ install.packages("jackalope", type = "source")
 #### macOS, R version \>= 4.0.0
 
 Follow the directions here to install R compiler tools:
-<https://thecoatlessprofessor.com/programming/cpp/r-compiler-tools-for-rcpp-on-macos/>.
+<https://blog.thecoatlessprofessor.com/programming/cpp/r-compiler-tools-for-rcpp-on-macos/index.html>.
 
 Check your version of `gcc` using `gcc --version` in the Terminal. Then,
 check the table at <https://mac.r-project.org/openmp/> to see which
@@ -163,7 +162,7 @@ Now you should be able to install `jackalope` by running
 `install.packages("jackalope", type = "source")` in R.
 
 For more information, please see
-<https://thecoatlessprofessor.com/programming/openmp-in-r-on-os-x/>.
+<https://blog.thecoatlessprofessor.com/programming/openmp-in-r-on-os-x/index.html>.
 
 ## Usage
 
